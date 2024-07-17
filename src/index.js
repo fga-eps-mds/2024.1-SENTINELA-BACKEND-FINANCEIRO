@@ -21,11 +21,15 @@ const corsOption = {
   credentials: true
 }
 
+// Aplicar o middleware CORS antes das rotas
 app.use(cors(corsOption));
+
+// Middleware para parsear JSON
+app.use(bodyParser.json());
 
 // Conect to MongoB
 let url;
-if(NODE_ENV === "development") {
+if (NODE_ENV === "development") {
   url = MONGO_URI;
 } else {
   url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${DB_HOST}/financedb`;
@@ -34,25 +38,22 @@ if(NODE_ENV === "development") {
 mongoose.connect(url)
   .then(() => {
     console.log('Conectado ao MongoDB');
+
+    // Rotas import
+    app.use(routes);
+
+    // Route test
+    app.get('/', (req, res) => {
+      res.send('Hello, world!');
+    });
+
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`);
+      console.log('NODE_ENV:', NODE_ENV);
+    });
   }).catch((err) => {
     console.error('Erro ao conectar ao MongoDB', err);
     process.exit(1);
   });
-
-// Middleware para parsear JSON
-app.use(bodyParser.json());
-
-// Rotas import
-app.use(routes);
-
-// Route test
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log('NODE_ENV:', NODE_ENV);
-});
 
 module.exports = app;
