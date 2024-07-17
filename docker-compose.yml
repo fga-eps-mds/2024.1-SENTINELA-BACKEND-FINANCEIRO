@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: financedb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27018:27017"
+    env_file: .env
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend_network
+    command: ["mongod", "--quiet", "--logpath", "/dev/null"]
+
+  express_backend:
+    build: .
+    container_name: express_backend_finances
+    ports:
+      - "3002:3002"
+    env_file: .env
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    depends_on:
+      - mongodb
+    networks:
+      - backend_network
+    volumes:
+      - ./:/app
+
+volumes:
+  mongo-data:
+
+networks:
+  backend_network:

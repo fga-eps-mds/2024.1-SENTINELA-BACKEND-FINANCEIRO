@@ -1,0 +1,8 @@
+Copie esse conteúdo para um .env
+
+NODE_ENV=development
+MONGO_URI=mongodb://root:password@financedb:27017/
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=password
+DB_HOST=financedb
+PORT=3002
