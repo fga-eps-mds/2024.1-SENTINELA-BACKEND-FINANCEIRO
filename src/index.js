@@ -32,7 +32,7 @@ let url;
 if (NODE_ENV === "development") {
   url = MONGO_URI;
 } else {
-  url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${DB_HOST}/financedb`;
+  url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${DB_HOST}`;
 }
 
 mongoose.connect(url)
