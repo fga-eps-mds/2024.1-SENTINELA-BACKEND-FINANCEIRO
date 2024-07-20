@@ -18,7 +18,7 @@ const supplierFormSchema = new mongoose.Schema({
         unique: true
         //immutable: true
     },
-    status: {
+    statusFornecedor: {
         type: String,
         required: true,
         enum: ['Ativo', 'Inativo']
@@ -66,7 +66,7 @@ const supplierFormSchema = new mongoose.Schema({
     complemento: {
         type: String
     },
-    nomebanco: {
+    nomeBanco: {
         type: String,
         required: true
     },
