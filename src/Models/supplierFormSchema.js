@@ -15,8 +15,8 @@ const supplierFormSchema = new mongoose.Schema({
     cpf: {
         type: Number,
         required: true,
-        unique: true
-        //immutable: true
+        unique: true,
+        immutable: true
     },
     statusFornecedor: {
         type: String,
@@ -88,7 +88,15 @@ const supplierFormSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    },
 })
 
 const supplierForm = mongoose.model('Supplier', supplierFormSchema);

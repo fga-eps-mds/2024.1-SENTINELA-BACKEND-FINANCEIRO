@@ -8,6 +8,9 @@ const supplierFormController = require('./Controllers/supplierFormController');
 // routes.get('/finance/:id', tokenValidation,  ???.getUserById);
 routes.post('/createSupplierForm', supplierFormController.createSupplierForm);
 routes.get('/getSupplierForm', supplierFormController.getSupplierForm);
+routes.get('/getSupplierForm/:id', supplierFormController.getSupplierFormById);
+routes.delete('/deleteSupplierForm/:id', supplierFormController.deleteSupplierFormById);
+routes.patch('/updateSupplierForm/:id', supplierFormController.updateSupplierFormById);
 
 // Public
 routes.post('/finance/create', NewController.createNew);
