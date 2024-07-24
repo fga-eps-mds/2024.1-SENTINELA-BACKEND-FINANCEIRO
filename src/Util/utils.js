@@ -1,5 +1,5 @@
 const validator = (dados) => {
-    
+    console.log(dados);
     if (typeof dados.nome !== "string" || dados.nome === "") {
         return ("Nome ou Razão social inválidos" );
       }
@@ -34,7 +34,7 @@ const validator = (dados) => {
       }
   
       const celularValido = /^\d{2} \d{5}-\d{4}$/;
-      if (celularValido.test(dados.celular)) {
+      if (!celularValido.test(dados.celular)) {
         return("Número de celular inválido");
       }
   
@@ -43,7 +43,7 @@ const validator = (dados) => {
         return ( "Número de telefone inválido");
       }
   
-      if (typeof dados.cep !== "string" || dados.cep === "") {
+      if (typeof dados.cep !== "number" || dados.cep === "") {
         return( "Cep inválido" );
       }
   
@@ -82,7 +82,7 @@ const validator = (dados) => {
       ];
       if (!ufsValidos.includes(dados.uf_endereco)) {
         return (  "UF inválida" );
-      }
+      } 
   
       const logradouroRegex = /^[a-zA-Z0-9\s,.()-]{5,100}$/;
       if (!logradouroRegex.test(dados.logradouro)) {

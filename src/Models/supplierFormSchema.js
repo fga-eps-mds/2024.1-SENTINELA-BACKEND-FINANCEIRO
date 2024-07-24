@@ -71,7 +71,7 @@ const supplierFormSchema = new mongoose.Schema({
         required: true
     },
     agencia: {
-        type: string,
+        type: String,
         required: true
     },
     numeroBanco: {
