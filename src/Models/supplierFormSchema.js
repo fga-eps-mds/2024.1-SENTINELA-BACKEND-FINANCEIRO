@@ -12,8 +12,8 @@ const supplierFormSchema = new mongoose.Schema({
         required: true,
         enum: ['Jurídica', 'Física']
     },
-    cpf: {
-        type: Number,
+    cpfCnpj: {
+        type: String,
         required: true,
         unique: true,
         immutable: true

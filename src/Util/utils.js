@@ -9,20 +9,23 @@ const validator = (dados) => {
         return ("Tipo de pessoa inválida");
       }
   
-      //if cpf
+      const cpfCnpjValidos = /^(?:\d{3}.\d{3}.\d{3}-\d{2}|\d{2}.\d{3}.\d{3}\/\d{4}-\d{2})$/;
+      if (!cpfCnpjValidos.test(dados.cpfCnpj)) {
+        return ("CPF ou CNPJ inválido");
+      }
   
       const statusFornecedorValido = ["Ativo", "Inativo"];
       if (!statusFornecedorValido.includes(dados.statusFornecedor)) {
         return ("Status de fornecedor inválido");
       }
   
-      const tipoTransacao = ["Receita", "Despesa"];
-      if (!tipoTransacao.includes(dados.naturezaTransacao)) {
+      const tipoTransacaoValida = ["Receita", "Despesa"];
+      if (!tipoTransacaoValida.includes(dados.naturezaTransacao)) {
         return ("Tipo de transação inválida");
       }
   
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(dados.email)) {
+      const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailValido.test(dados.email)) {
         return ("E-mail inválido");
       }
   
@@ -51,41 +54,13 @@ const validator = (dados) => {
         return ("Cidade inválida");
       }
   
-      const ufsValidos = [
-        "AC",
-        "AL",
-        "AP",
-        "AM",
-        "BA",
-        "CE",
-        "DF",
-        "ES",
-        "GO",
-        "MA",
-        "MT",
-        "MS",
-        "MG",
-        "PA",
-        "PB",
-        "PR",
-        "PE",
-        "PI",
-        "RJ",
-        "RN",
-        "RS",
-        "RO",
-        "RR",
-        "SC",
-        "SP",
-        "SE",
-        "TO",
-      ];
+      const ufsValidos = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
       if (!ufsValidos.includes(dados.uf_endereco)) {
         return (  "UF inválida" );
       } 
   
-      const logradouroRegex = /^[a-zA-Z0-9\s,.()-]{5,100}$/;
-      if (!logradouroRegex.test(dados.logradouro)) {
+      const logradouro = /^[a-zA-Z0-9\s,.()-]{5,100}$/;
+      if (!logradouro.test(dados.logradouro)) {
         return (
           "Logradouro inválido. Deve conter entre 5 e 100 caracteres."
         );
