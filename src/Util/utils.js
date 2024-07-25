@@ -8,10 +8,12 @@ const validator = (dados) => {
       if (!tipoPessoaValidas.includes(dados.tipoPessoa)) {
         return ("Tipo de pessoa inválida");
       }
-  
-      const cpfCnpjValidos = /^(?:\d{3}.\d{3}.\d{3}-\d{2}|\d{2}.\d{3}.\d{3}\/\d{4}-\d{2})$/;
-      if (!cpfCnpjValidos.test(dados.cpfCnpj)) {
-        return ("CPF ou CNPJ inválido");
+
+      const cpfValido = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
+      const cnpjValido = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
+      
+      if (!cpfValido.test(dados.cpfCnpj) && !cnpjValido.test(dados.cpfCnpj)) {
+          return ("CPF ou CNPJ inválidos");
       }
   
       const statusFornecedorValido = ["Ativo", "Inativo"];
