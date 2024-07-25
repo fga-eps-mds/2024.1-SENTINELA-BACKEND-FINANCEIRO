@@ -9,84 +9,69 @@ const supplierFormSchema = new mongoose.Schema({
     },
     tipoPessoa: {
         type: String,
-        required: true,
         enum: ['Jurídica', 'Física']
     },
     cpfCnpj: {
         type: String,
-        required: true,
         unique: true,
         immutable: true
     },
     statusFornecedor: {
         type: String,
-        required: true,
         enum: ['Ativo', 'Inativo']
     },
     naturezaTransacao: {
         type: String,
-        required: true,
         enum: ['Receita', 'Despesa']
     },
     email: {
         type: String,
-        required: true,
         unique: true
     },
     nomeContato: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     celular: {
         type: String,
-        required: true
+        unique: true
     },
     telefone: {
         type: String,
-        required: true
+        unique: true
     },
     cep: {
         type: Number,
-        required: true
+        unique: true
     },
     cidade: {
-        type: String,
-        required: true
+        type: String
     },
     uf_endereco: {
         type: String,
-        required: true,
         enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
     },
     logradouro: {
-        type: String,
-        required: true
+        type: String
     },
     complemento: {
         type: String
     },
     nomeBanco: {
-        type: String,
-        required: true
+        type: String
     },
     agencia: {
-        type: String,
-        required: true
+        type: String
     },
     numeroBanco: {
         type: Number,
-        required: true,
         unique: true
     },
     dv: {
         type: Number,
-        required: true,
         unique: true
     },
     chavePix: {
         type: String,
-        required: true,
         unique: true
     },
     createdAt: {
