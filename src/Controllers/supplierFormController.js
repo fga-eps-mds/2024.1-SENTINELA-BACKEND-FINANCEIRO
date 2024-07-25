@@ -3,13 +3,14 @@ const util = require("../Util/utils");
 
 const createSupplierForm = async (req, res) => {
   try {
-    console.log(req.body.headers.supplierData);
-    //const message = util.validator(req.body)
-    //if (message){
-      //return res.status(404).send({erro:message})
-    //}
+    message = util.validator(req.body.headers.supplierData);
+
+    if (message){
+      return res.status(404).send({erro:message})
+    }
 
     const supplier = new SupplierForm(req.body.headers.supplierData);
+
     await supplier.save();
     return res.status(201).send(supplier);
   } catch (error) {
