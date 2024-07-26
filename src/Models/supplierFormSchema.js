@@ -13,7 +13,7 @@ const supplierFormSchema = new mongoose.Schema({
     },
     cpfCnpj: {
         type: String,
-        //unique: true,
+        unique: true,
         immutable: true
     },
     statusFornecedor: {
@@ -63,11 +63,11 @@ const supplierFormSchema = new mongoose.Schema({
         type: String
     },
     numeroBanco: {
-        type: Number,
+        type: String,
         unique: true
     },
     dv: {
-        type: Number,
+        type: String,
         unique: true
     },
     chavePix: {
