@@ -14,10 +14,10 @@ const validator = (dados) => {
   const cpfValido = /^(\d{3}.\d{3}.\d{3}-\d{2})$/;
   const cnpjValido = /^(\d{2}.\d{3}.\d{3}\/\d{4}-\d{2})$/;
   if (
-    (!cpfValido.test(dados.cpf) && dados.tipoPessoa === "Física") ||
-    (!cnpjValido.test(dados.cpf) && dados.tipoPessoa === "Jurídica")
+    (!cpfValido.test(dados.cpfCnpj) && dados.tipoPessoa === "Física") ||
+    (!cnpjValido.test(dados.cpfCnpj) && dados.tipoPessoa === "Jurídica")
   ) {
-    console.log("CPF");
+    console.log("CPF inválido");
     return "CPF ou CNPJ inválido";
   }
 
@@ -44,19 +44,19 @@ const validator = (dados) => {
     return "Nome de contato inválido";
   }
 
-  const celularValido = /^\d{2} \d{5}-\d{4}$/;
+  const celularValido = /^\(\d{2}\) \d{5}-\d{4}$/;
   if (!celularValido.test(dados.celular)) {
     console.log("Celular");
     return "Número de celular inválido";
   }
   
-  const telefoneValido = /^\d{2} \d{4}-\d{4}$/;
+  const telefoneValido = /^\(\d{2}\) \d{4}-\d{4}$/;
   if (!telefoneValido.test(dados.telefone)) {
     console.log("Telefone");
     return "Número de telefone inválido";
   }
 
-  const cepValido = /^\d{8}$/;
+  const cepValido = /^\d{5}-\d{3}$/;
   if (!cepValido.test(dados.cep) || dados.cep === "") {
     console.log("CEP");
     return "Cep inválido";
@@ -71,43 +71,43 @@ const validator = (dados) => {
 
   const ufsValidos = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
   if (!ufsValidos.includes(dados.uf_endereco)) {
-    console.log("UF");
+    console.log("UF inválida");
     return "UF inválida";
   }
 
   const logradouro = /^[a-zA-Z0-9\s,.()-]{5,100}$/;
   if (!logradouro.test(dados.logradouro)) {
-    console.log("Logradouro");
+    console.log("Logradouro inválido");
     return "Logradouro inválido. Deve conter entre 5 e 100 caracteres.";
   }
 
   if (typeof dados.complemento !== "string" || dados.complemento === "") {
-    console.log("Complemento");
+    console.log("Complemento inválido");
     return "Complemento inválido";
   }
 
   if (typeof dados.agencia !== "string" || dados.agencia === "") {
-    console.log("Agência");
+    console.log("Agência inválida");
     return "Agência inválida";
   }
 
   const numeroValido = /^\d*$/;
   if (!numeroValido.test(dados.numeroBanco) || dados.numeroBanco === "") {
-    console.log("Número Bancário");
+    console.log("Número Bancário inválido");
     return "Número inválido";
   } else {
     dados.numeroBanco = Number(dados.numeroBanco);
   }
   const dvValido = /^\d*$/;
   if (!dvValido.test(dados.dv) || dados.dv === "") {
-    console.log("DV");
+    console.log("DV inválido");
     return "DV inválido";
   } else {
     dados.dv = Number(dados.dv);
   }
 
   if (typeof dados.chavePix !== "string" || dados.chavePix === "") {
-    console.log("PIX");
+    console.log("PIX inválido");
     return "Chave Pix inválida";
   }
   
