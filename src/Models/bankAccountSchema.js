@@ -24,11 +24,14 @@ const bankAccountSchema = new mongoose.Schema({ // Criação do schema
     },
     status: {
         type: String,
-        default: 'Ativo', // Corrigido para definir 'Ativo' como valor padrão
         required: true,
         enum: ['Ativo', 'Inativo']
     },
     agency: {
+        type: String,
+        required: false
+    },
+    pix: {
         type: String,
         required: false
     }

@@ -3,6 +3,7 @@ const routes = express.Router();
 const newController = require('./Controllers/newController');
 const bankAccountController = require('./Controllers/bankAccountController');
 
+
 // Rotas Privadas (Comentadas por enquanto, você pode descomentar quando implementar a validação de token)
 // router.get('/finance', tokenValidation, ???.getUsers);
 // router.get('/finance/:id', tokenValidation, ???.getUserById);

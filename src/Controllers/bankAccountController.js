@@ -2,33 +2,46 @@ const BankAccount = require('../Models/bankAccountSchema'); // Importação do m
 
 const createBankAccount = async (req, res) => {
     try {
-        const bankAccount = new BankAccount(req.body); // Criação de nova instância do modelo com os dados da requisição
-        await bankAccount.save(); // Salvando no banco de dados
-        res.status(201).send(bankAccount); // Correção para enviar a conta criada
+        // Log dos dados recebidos para depuração
+        console.log('Dados recebidos:', req.body);
+
+        // Validação simples dos dados
+        const formData = req.body.formData;
+
+        const bankAccount = new BankAccount(formData); // Criação de uma nova conta bancária
+        await bankAccount.save(); // Salvando a conta bancária no banco de dados
+        console.log('Conta bancária criada com sucesso:', bankAccount);
+        res.status(201).send(bankAccount); // Enviando resposta de sucesso
+
     } catch (error) {
-        res.status(400).send(error); // Enviando erro caso ocorra
+        // Log do erro para depuração
+        console.error('Erro ao criar conta bancária:', error.message);
+        res.status(400).send({ error: error.message }); // Enviando erro caso ocorra
     }
 };
 
 const getBankAccount = async (req, res) => {
     try {
-        const bankAccount = await BankAccount.find();
-        res.status(200).send(bankAccount);
+        const bankAccounts = await BankAccount.find(); // Obtendo todas as contas bancárias
+        res.status(200).send(bankAccounts);
     } catch (error) {
-        res.status(500).send({ error: error.message }); // Certifique-se de que `res` está sendo manipulado corretamente aqui
+        // Log do erro para depuração
+        console.error('Erro ao listar contas bancárias:', error.message);
+        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
     }
 };
 
-const deleteBankAccount = async(req,res) =>{
-    try{
-        const bankAccount = await BankAccount.findByIdAndDelete(req.params.id);
-        if(!bankAccount){
-            res.status(404).send('Conta não encontrada');
+const deleteBankAccount = async (req, res) => {
+    try {
+        const bankAccount = await BankAccount.findByIdAndDelete(req.params.id); // Deletando conta pelo ID
+        if (!bankAccount) {
+            return res.status(404).send({ message: 'Conta não encontrada' }); // Enviando mensagem de erro se a conta não for encontrada
         }
-        res.status(200).send('Conta deletada com sucesso');
-    }
-    catch(error){
-        res.status(500).send({error:error.message});
+        res.status(200).send({ message: 'Conta deletada com sucesso' });
+    } catch (error) {
+        // Log do erro para depuração
+        console.error('Erro ao deletar conta bancária:', error.message);
+        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
     }
 };
 
