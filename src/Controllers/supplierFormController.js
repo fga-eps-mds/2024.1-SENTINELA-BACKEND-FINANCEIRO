@@ -51,7 +51,7 @@ const updateSupplierFormById = async (req, res) => {
     if (!updatedSupplier) {
       return res.status(404).send();
     }
-    Object.assign(updatedSupplier, req.body);
+    Object.assign(updatedSupplier, req.body.supplierData);
     updatedSupplier.updatedAt = new Date();
     await updatedSupplier.save();
     return res.status(200).send(updatedSupplier);
