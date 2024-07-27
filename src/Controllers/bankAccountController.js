@@ -22,12 +22,21 @@ const createBankAccount = async (req, res) => {
 
 const getBankAccount = async (req, res) => {
     try {
-        const bankAccounts = await BankAccount.find(); // Obtendo todas as contas bancárias
-        res.status(200).send(bankAccounts);
+        // Retorna apenas a conta bancária do nome fornecido
+        if (req.query.name) {
+            const bankAccount = await BankAccount.findOne({ name: req.query.name });
+            
+            if (bankAccount) {
+                return res.status(200).json(bankAccount);
+            } else {
+                return res.status(404).json({ message: 'Conta não encontrada' });
+            }
+        } else {
+            return res.status(400).json({ message: 'Nome não fornecido' });
+        }
     } catch (error) {
-        // Log do erro para depuração
-        console.error('Erro ao listar contas bancárias:', error.message);
-        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
+        console.error(error);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
     }
 };
 
