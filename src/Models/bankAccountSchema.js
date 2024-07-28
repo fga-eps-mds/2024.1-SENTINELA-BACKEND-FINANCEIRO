@@ -3,7 +3,8 @@ const mongoose = require('mongoose'); // Import mongoose
 const bankAccountSchema = new mongoose.Schema({ // Criação do schema
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     bank: {
         type: String,

@@ -40,6 +40,20 @@ const getBankAccount = async (req, res) => {
     }
 };
 
+const getBankAccountbyId = async (req, res) => {
+    try {
+        const bankAccount = await BankAccount.findById(req.params.id); // Buscando conta pelo ID
+        if (!bankAccount) {
+            return res.status(404).send({ message: 'Conta não encontrada' }); // Enviando mensagem de erro se a conta não for encontrada
+        }
+        res.status(200).json(bankAccount); // Enviando conta bancária encontrada
+    } catch (error) {
+        // Log do erro para depuração
+        console.error('Erro ao buscar conta bancária:', error.message);
+        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
+    }
+};
+
 const deleteBankAccount = async (req, res) => {
     try {
         const bankAccount = await BankAccount.findByIdAndDelete(req.params.id); // Deletando conta pelo ID
@@ -57,5 +71,6 @@ const deleteBankAccount = async (req, res) => {
 module.exports = {
     createBankAccount,
     getBankAccount,
-    deleteBankAccount
+    deleteBankAccount,
+    getBankAccountbyId
 };
