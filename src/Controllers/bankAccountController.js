@@ -68,9 +68,25 @@ const deleteBankAccount = async (req, res) => {
     }
 };
 
+const updateBankAccount = async (req, res) => {
+    try {
+        const bankAccount = await BankAccount.findByIdAndUpdate(req.params.id, req.body, { new: true }); // Atualizando conta pelo ID
+        if (!bankAccount) {
+            return res.status(404).send({ message: 'Conta não encontrada' }); // Enviando mensagem de erro se a conta não for encontrada
+        }
+        res.status(200).send(bankAccount); // Enviando conta atualizada
+    }
+    catch (error) {
+        // Log do erro para depuração
+        console.error('Erro ao atualizar conta bancária:', error.message);
+        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
+    }
+}
+
 module.exports = {
     createBankAccount,
     getBankAccount,
     deleteBankAccount,
-    getBankAccountbyId
+    getBankAccountbyId,
+    updateBankAccount
 };
