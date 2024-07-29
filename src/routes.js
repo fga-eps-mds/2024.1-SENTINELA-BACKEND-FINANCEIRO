@@ -12,6 +12,8 @@ routes.get("/finance/bankAccount", bankAccountController.getBankAccount);
 routes.get("/finance/bankAccount/:id", bankAccountController.getBankAccountbyId);
 routes.delete('/finance/deleteBankAccount/:id', bankAccountController.deleteBankAccount);
 routes.patch('/finance/updateBankAccount/:id', bankAccountController.updateBankAccount);
+routes.get('/finance/getBankAccount', bankAccountController.getAll)
+
 
 
 // Rotas Públicas

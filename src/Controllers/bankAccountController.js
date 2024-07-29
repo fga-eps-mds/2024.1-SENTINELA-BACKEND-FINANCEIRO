@@ -1,3 +1,5 @@
+const mongoose = require('mongoose'); // Importar mongoose
+
 const BankAccount = require('../Models/bankAccountSchema'); // Importação do modelo
 
 const createBankAccount = async (req, res) => {
@@ -19,6 +21,17 @@ const createBankAccount = async (req, res) => {
         res.status(400).send({ error: error.message }); // Enviando erro caso ocorra
     }
 };
+
+const getAll = async (req,res) => {
+
+    try {
+        const bankAccount = await BankAccount.find({});
+        return res.status(200).send(bankAccount);
+    } catch (error) {
+        return res.status(400).send({ error });
+    }
+};
+
 
 const getBankAccount = async (req, res) => {
     try {
@@ -70,23 +83,33 @@ const deleteBankAccount = async (req, res) => {
 
 const updateBankAccount = async (req, res) => {
     try {
-        const bankAccount = await BankAccount.findByIdAndUpdate(req.params.id, req.body, { new: true }); // Atualizando conta pelo ID
-        if (!bankAccount) {
-            return res.status(404).send({ message: 'Conta não encontrada' }); // Enviando mensagem de erro se a conta não for encontrada
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send({ message: 'ID inválido' });
         }
-        res.status(200).send(bankAccount); // Enviando conta atualizada
-    }
-    catch (error) {
-        // Log do erro para depuração
+        
+        // Log dos dados recebidos
+        console.log('Dados recebidos para atualização:', req.body);
+
+        // Atualizar apenas os campos fornecidos
+        const bankAccount = await BankAccount.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+        if (!bankAccount) {
+            return res.status(404).send({ message: 'Conta não encontrada' });
+        }
+
+        res.status(200).send(bankAccount);
+    } catch (error) {
         console.error('Erro ao atualizar conta bancária:', error.message);
-        res.status(500).send({ error: error.message }); // Enviando mensagem de erro
+        res.status(500).send({ error: error.message });
     }
-}
+};
+
 
 module.exports = {
     createBankAccount,
     getBankAccount,
     deleteBankAccount,
     getBankAccountbyId,
-    updateBankAccount
+    updateBankAccount,
+    getAll
 };
