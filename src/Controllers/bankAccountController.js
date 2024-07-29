@@ -7,10 +7,24 @@ const createBankAccount = async (req, res) => {
         // Log dos dados recebidos para depuração
         console.log('Dados recebidos:', req.body);
 
-        // Validação simples dos dados
-        const formData = req.body.formData;
+        // Acessando dados diretamente
+        const formData = req.body.formData || {}; // Fallback para objeto vazio se formData estiver ausente
+        const { name } = formData;
 
-        const bankAccount = new BankAccount(formData); // Criação de uma nova conta bancária
+        if (!name) {
+            return res.status(400).send({ error: 'Nome não fornecido' }); // Erro caso 'name' esteja faltando
+        }
+
+        // Verifica se já existe uma conta bancária com o mesmo nome
+        const existingName = await BankAccount.findOne({ name });
+
+        if (existingName) {
+            // Mensagem de erro se o nome já estiver repetido
+            return res.status(409).send({ error: 'Nome já cadastrado' }); // Código 409 para conflito
+        }
+
+        // Criação de uma nova conta bancária
+        const bankAccount = new BankAccount(formData);
         await bankAccount.save(); // Salvando a conta bancária no banco de dados
         console.log('Conta bancária criada com sucesso:', bankAccount);
         res.status(201).send(bankAccount); // Enviando resposta de sucesso
