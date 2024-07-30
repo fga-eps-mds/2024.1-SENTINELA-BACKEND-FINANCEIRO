@@ -16,9 +16,8 @@ const {
 } = process.env;
 
 const corsOption = {
-  origin: ['http://localhost:5173'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true
+  origin: "*",
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
 }
 
 // Aplicar o middleware CORS antes das rotas
