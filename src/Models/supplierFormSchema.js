@@ -9,46 +9,51 @@ const supplierFormSchema = new mongoose.Schema({
     },
     tipoPessoa: {
         type: String,
-        enum: ['Jurídica', 'Física']
+        enum: ['Jurídica', 'Física', '']
     },
     cpfCnpj: {
         type: String,
         unique: true,
-        immutable: true
+        immutable: true,
+        sparse: true
     },
     statusFornecedor: {
         type: String,
-        enum: ['Ativo', 'Inativo']
+        enum: ['Ativo', 'Inativo', '']
     },
     naturezaTransacao: {
         type: String,
-        enum: ['Receita', 'Despesa']
+        enum: ['Receita', 'Despesa', '']
     },
     email: {
         type: String,
-        unique: true
+        unique: true,
+        sparse:true
     },
     nomeContato: {
         type: String
     },
     celular: {
         type: String,
-        unique: true
+        unique: true,
+        sparse:true
     },
     telefone: {
         type: String,
-        unique: true
+        unique: true,
+        sparse:true
     },
     cep: {
         type: String,
-        unique: true
+        unique: true,
+        sparse:true
     },
     cidade: {
         type: String
     },
     uf_endereco: {
         type: String,
-        enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+        enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', '']
     },
     logradouro: {
         type: String
@@ -64,15 +69,18 @@ const supplierFormSchema = new mongoose.Schema({
     },
     numeroBanco: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     dv: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     chavePix: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     createdAt: {
         type: Date,
