@@ -1,5 +1,4 @@
 const validator = (dados) => {
-  console.log("Validator");
 
   if (typeof dados.nome !== "string" || dados.nome === "") {
     return "Nome ou Razão social inválidos";
