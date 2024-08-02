@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = express.Router();
-const NewController = require("./Controllers/newController");
+const supplierFormController = require("./Controllers/supplierFormController");
 
 // Private
 // routes.get('/finance', tokenValidation, ???.getUsers);
@@ -18,7 +18,7 @@ routes.patch(
 );
 
 // Public
-routes.post("/finance/create", NewController.createNew);
-routes.get("/finance", NewController.getNews);
+// routes.post("/finance/create", NewController.createNew);
+// routes.get("/finance", NewController.getNews);
 
 module.exports = routes;
