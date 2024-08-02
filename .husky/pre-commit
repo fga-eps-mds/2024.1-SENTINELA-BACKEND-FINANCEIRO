@@ -1,0 +1,20 @@
+echo '🏗️👷 Estilizando e verificando os padrões do seu código antes de commitar . . .\n'
+
+# Check Prettier standards
+npm run check-format ||
+(
+    echo '\n🤢🤮 Parece haver um problema de estilo 🤢🤮
+    Checagem do Prettier falhou... Rode um npm run format, adicione as alterações e tente novamente.\n';
+    false;
+)
+
+# Check ESLint Standards
+npm run lint ||
+(
+    echo '\n😤🏀👋😤 Daqui não passa! 😤🏀👋😤 
+    Checagem do ESLint falhou... Faça as alterações listadas acima e tente novamente.\n'
+    false; 
+)
+
+# If everything passes... Now we can commit
+echo '\n\n✅✅✅✅ Você ganhou dessa vez, commitando agora. ✅✅✅✅\n'
