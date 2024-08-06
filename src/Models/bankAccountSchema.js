@@ -1,42 +1,43 @@
-const mongoose = require('mongoose'); // Import mongoose
+const mongoose = require("mongoose"); // Import mongoose
 
-const bankAccountSchema = new mongoose.Schema({ // Criação do schema
+const bankAccountSchema = new mongoose.Schema({
+    // Criação do schema
     name: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     bank: {
         type: String,
-        required: true
+        required: true,
     },
     accountType: {
         type: String,
         required: true,
-        enum: ['Conta Corrente', 'Poupança', 'Investimento', 'Caixa']
+        enum: ["Conta Corrente", "Poupança", "Investimento", "Caixa"],
     },
     accountNumber: {
         type: String,
-        required: false
+        required: false,
     },
     dv: {
         type: Number,
-        required: false
+        required: false,
     },
     status: {
         type: String,
         required: true,
-        enum: ['Ativo', 'Inativo']
+        enum: ["Ativo", "Inativo"],
     },
     agency: {
         type: String,
-        required: false
+        required: false,
     },
     pix: {
         type: String,
-        required: false
-    }
+        required: false,
+    },
 });
 
-const BankAccount = mongoose.model('BankAccount', bankAccountSchema); // Criação do modelo a partir do schema
+const BankAccount = mongoose.model("BankAccount", bankAccountSchema); // Criação do modelo a partir do schema
 module.exports = BankAccount; // Exportação do modelo
