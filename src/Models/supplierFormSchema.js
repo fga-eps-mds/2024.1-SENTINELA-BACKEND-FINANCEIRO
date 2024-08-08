@@ -12,9 +12,6 @@ const supplierFormSchema = new mongoose.Schema({
     },
     cpfCnpj: {
         type: String,
-        unique: true,
-        immutable: true,
-        sparse: true,
     },
     statusFornecedor: {
         type: String,
@@ -26,26 +23,18 @@ const supplierFormSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     nomeContato: {
         type: String,
     },
     celular: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     telefone: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     cep: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     cidade: {
         type: String,
@@ -97,18 +86,12 @@ const supplierFormSchema = new mongoose.Schema({
     },
     numeroBanco: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     dv: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     chavePix: {
         type: String,
-        unique: true,
-        sparse: true,
     },
     createdAt: {
         type: Date,
