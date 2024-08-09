@@ -1,6 +1,7 @@
 const express = require("express");
 const routes = express.Router();
 const supplierFormController = require("./Controllers/supplierFormController");
+const financialMovementsController = require("./Controllers/financialMovementsController");
 
 // Private
 // routes.get('/finance', tokenValidation, ???.getUsers);
@@ -15,6 +16,26 @@ routes.delete(
 routes.patch(
     "/SupplierForm/update/:id",
     supplierFormController.updateSupplierFormById
+);
+routes.post(
+    "/financialMovements/create",
+    financialMovementsController.createFinancialMovements
+);
+routes.get(
+    "/financialMovements",
+    financialMovementsController.getFinancialMovements
+);
+routes.get(
+    "/financialMovements/:id",
+    financialMovementsController.getFinancialMovementsById
+);
+routes.delete(
+    "/financialMovements/delete/:id",
+    financialMovementsController.deleteFinancialMovementsById
+);
+routes.patch(
+    "/financialMovements/update/:id",
+    financialMovementsController.updateFinancialMovementsById
 );
 
 // Public
