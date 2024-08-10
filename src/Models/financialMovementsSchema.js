@@ -13,7 +13,7 @@ const financialMovementsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    cpfCnpj: {
+    cpFCnpj: {
         type: String,
         immutable: true,
     },
