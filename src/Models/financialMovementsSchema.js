@@ -35,7 +35,7 @@ const financialMovementsSchema = new mongoose.Schema({
     formadePagamento: {
         type: String,
         enum: [
-            "Cŕedito",
+            "Crédito",
             "Débito",
             "PIX",
             "Dinheiro",

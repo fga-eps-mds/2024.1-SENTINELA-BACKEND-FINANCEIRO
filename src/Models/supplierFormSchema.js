@@ -13,7 +13,6 @@ const supplierFormSchema = new mongoose.Schema({
     cpfCnpj: {
         type: String,
         unique: true,
-        immutable: true,
         sparse: true,
     },
     statusFornecedor: {
