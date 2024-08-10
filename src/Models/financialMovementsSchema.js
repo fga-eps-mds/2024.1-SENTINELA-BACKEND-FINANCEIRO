@@ -15,9 +15,7 @@ const financialMovementsSchema = new mongoose.Schema({
     },
     cpfCnpj: {
         type: String,
-        unique: true,
         immutable: true,
-        sparse: true,
     },
     valorBruto: {
         type: Number,
@@ -62,6 +60,14 @@ const financialMovementsSchema = new mongoose.Schema({
     },
     descricao: {
         type: String,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
     },
 });
 

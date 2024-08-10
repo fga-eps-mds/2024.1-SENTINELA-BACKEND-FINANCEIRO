@@ -1,21 +1,23 @@
 const FinancialMovements = require("../Models/financialMovementsSchema");
-const util = require("../Util/utils");
 
 const createFinancialMovements = async (req, res) => {
     try {
-        const message = util.validator(req.body.financialMovementsData);
+        const { financialMovementsData } = req.body;
 
-        if (message) {
-            return res.status(404).send({ error: message });
+        if (!financialMovementsData) {
+            return res.status(400).send({ error: "No data provided" });
         }
 
+        // Criação da movimentação financeira
         const financialMovement = new FinancialMovements(
-            req.body.financialMovementsData
+            financialMovementsData
         );
         await financialMovement.save();
-        return res.status(201).send(financialMovement);
+
+        res.status(201).send(financialMovement);
     } catch (error) {
-        return res.status(400).send(error);
+        console.error("Error creating financial movement:", error.message);
+        return res.status(400).send({ error: error.message });
     }
 };
 
