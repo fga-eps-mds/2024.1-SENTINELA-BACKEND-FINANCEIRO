@@ -9,6 +9,14 @@ const financialMovementsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    nomeOrigem: {
+        type: String,
+        required: true,
+    },
+    nomeDestino: {
+        type: String,
+        required: true,
+    },
     tipoDocumento: {
         type: String,
         required: true,
@@ -60,6 +68,7 @@ const financialMovementsSchema = new mongoose.Schema({
     },
     descricao: {
         type: String,
+        maxlength: 130,
     },
     createdAt: {
         type: Date,
