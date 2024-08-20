@@ -6,7 +6,7 @@ const routes = require("./routes");
 
 const app = express();
 
-const { NODE_ENV, MONGO_URI, PORT } = process.env;
+const { NODE_ENV, MONGO_URI, PORT, OFFICIAL_MONGO_URI } = process.env;
 
 const corsOption = {
     origin: "*",
