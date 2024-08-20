@@ -8,10 +8,7 @@ const app = express();
 
 const {
     NODE_ENV,
-    MONGO_INITDB_ROOT_USERNAME,
-    MONGO_INITDB_ROOT_PASSWORD,
     MONGO_URI,
-    DB_HOST,
     PORT,
 } = process.env;
 
