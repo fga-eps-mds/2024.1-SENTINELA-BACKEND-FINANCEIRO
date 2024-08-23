@@ -35,6 +35,8 @@
     "prettier": "^3.3.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "mongodb-memory-server": "^10.0.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.0.0"
   }
 }
