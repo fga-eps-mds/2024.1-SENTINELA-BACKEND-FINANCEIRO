@@ -1,88 +1,69 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const supplierFormSchema = new mongoose.Schema({
+    
     nome: {
         type: String,
         required: true,
-        unique: true,
+        unique: true
     },
     tipoPessoa: {
         type: String,
-        enum: ["Jurídica", "Física", ""],
+        enum: ['Jurídica', 'Física', '']
     },
     cpfCnpj: {
         type: String,
+        unique: true,
     },
     statusFornecedor: {
         type: String,
-        enum: ["Ativo", "Inativo", ""],
+        enum: ['Ativo', 'Inativo', '']
     },
     naturezaTransacao: {
         type: String,
-        enum: ["Receita", "Despesa", ""],
+        enum: ['Receita', 'Despesa', '']
     },
     email: {
         type: String,
+        unique: true,
+        sparse:true
     },
     nomeContato: {
-        type: String,
+        type: String
     },
     celular: {
         type: String,
+        unique: true,
+        sparse:true
     },
     telefone: {
         type: String,
+        unique: true,
+        sparse:true
     },
     cep: {
         type: String,
+        unique: true,
+        sparse:true
     },
     cidade: {
-        type: String,
+        type: String
     },
     uf_endereco: {
         type: String,
-        enum: [
-            "AC",
-            "AL",
-            "AP",
-            "AM",
-            "BA",
-            "CE",
-            "DF",
-            "ES",
-            "GO",
-            "MA",
-            "MT",
-            "MS",
-            "MG",
-            "PA",
-            "PB",
-            "PR",
-            "PE",
-            "PI",
-            "RJ",
-            "RN",
-            "RS",
-            "RO",
-            "RR",
-            "SC",
-            "SP",
-            "SE",
-            "TO",
-            "",
-        ],
+        enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', '']
     },
     logradouro: {
-        type: String,
+        type: String
     },
     complemento: {
-        type: String,
+        type: String
     },
     nomeBanco: {
-        type: String,
+        type: String
     },
     agencia: {
-        type: String,
+        type: String
     },
     numeroBanco: {
         type: String,
@@ -95,13 +76,13 @@ const supplierFormSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now,
+        default: Date.now
     },
     updatedAt: {
         type: Date,
-        default: Date.now,
+        default: Date.now
     },
-});
+})
 
-const supplierForm = mongoose.model("Supplier", supplierFormSchema);
+const supplierForm = mongoose.model('Supplier', supplierFormSchema);
 module.exports = supplierForm;
