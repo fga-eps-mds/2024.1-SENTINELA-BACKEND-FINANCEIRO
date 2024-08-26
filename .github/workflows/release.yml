@@ -2,9 +2,14 @@ name: backend-financeiro-release
 
 on:
   push:
-    branches: [main, devel]
+    branches: [main]
     tags:
       - "v*"
+  pull_request:
+    branches:
+      - main
+      - devel
+    types: [closed]
 
 jobs:
   generate-release:

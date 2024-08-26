@@ -6,14 +6,7 @@ const routes = require("./routes");
 
 const app = express();
 
-const {
-    NODE_ENV,
-    MONGO_INITDB_ROOT_USERNAME,
-    MONGO_INITDB_ROOT_PASSWORD,
-    MONGO_URI,
-    DB_HOST,
-    PORT,
-} = process.env;
+const { NODE_ENV, MONGO_URI, PORT, OFFICIAL_MONGO_URI } = process.env;
 
 const corsOption = {
     origin: "*",
@@ -31,7 +24,7 @@ let url;
 if (NODE_ENV === "development") {
     url = MONGO_URI;
 } else {
-    url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${DB_HOST}`;
+    url = OFFICIAL_MONGO_URI;
 }
 
 mongoose
