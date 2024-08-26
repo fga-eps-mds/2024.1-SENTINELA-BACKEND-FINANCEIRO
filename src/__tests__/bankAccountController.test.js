@@ -72,6 +72,20 @@ describe("BankAccount API", () => {
         expect(response.status).toBe(409);
         expect(response.body.error).toBe("Nome já cadastrado");
     });
+    it.only("should not create a bank account without a name", async () => {
+        const response = await request(app)
+            .post("/finance/createBankAccount")
+            .send({
+                formData: {
+                    bank: "Banco Teste",
+                    accountNumber: "12345678",
+                    status: "Ativo",
+                    accountType: "Conta Corrente",
+                },
+            });
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Nome não fornecido");
+    });
 
     it("should fetch all bank accounts", async () => {
         const response = await request(app).get("/finance/getBankAccount"); // Atualize o caminho da rota
