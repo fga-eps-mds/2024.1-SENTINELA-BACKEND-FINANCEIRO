@@ -48,9 +48,24 @@ describe("Supplier Form Controller Tests", () => {
             .send({
                 supplierData: {
                     nome: "Test Supplier",
-                    email: "supplier@test.com",
-                    celular: "123456789",
-                    logradouro: "123 Supplier St",
+                    tipoPessoa: "",
+                    cpfCnpj: "",
+                    statusFornecedor: "",
+                    naturezaTransacao: "",
+                    email: "",
+                    nomeContato: "",
+                    celular: "",
+                    telefone: "",
+                    cep: "",
+                    cidade: "",
+                    uf_endereco: "",
+                    logradouro: "",
+                    complemento: "",
+                    nomeBanco: "",
+                    agencia: "",
+                    numeroBanco: "",
+                    dv: "",
+                    chavePix: "",
                 },
             });
 
