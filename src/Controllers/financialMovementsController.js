@@ -2,7 +2,8 @@ const FinancialMovements = require("../Models/financialMovementsSchema");
 
 const createFinancialMovements = async (req, res) => {
     try {
-        const { financialMovementsData } = req.body;
+        console.log("Dados recebidos:", req.body);
+        const financialMovementsData = req.body.financialMovementsData || {};
         if (!financialMovementsData) {
             return res.status(400).send({ error: "No data provided" });
         }

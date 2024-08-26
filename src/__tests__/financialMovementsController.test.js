@@ -6,20 +6,8 @@ const routes = require("../routes");
 const financialMovementsModel = require("../Models/financialMovementsSchema");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
-const mockedFMovements = {
-    contaOrigem: "Sindicato",
-    contaDestino: "Sindicalizado",
-    nomeOrigem: "Empresa A",
-    nomeDestino: "Empresa B",
-    tipoDocumento: "NF-e",
-    valorBruto: 1000.0,
-    formadePagamento: "PIX",
-    datadeVencimento: new Date("2024-09-01"),
-    datadePagamento: new Date("2024-08-31"),
-};
-
-const app = express();
 let mongoServer;
+let app = express();
 
 const corsOptions = {
     origin: "*",
@@ -30,41 +18,75 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", routes);
+beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
 
-describe("FinancialMovements Controller Tests", () => {
-    beforeAll(async () => {
-        mongoServer = await MongoMemoryServer.create();
-        const uri = mongoServer.getUri();
-
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+    await mongoose.connect(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
     });
+    app.use("/", routes);
+}, 30000);
 
-    afterAll(async () => {
-        await mongoose.connection.close();
-        await mongoServer.stop();
-    });
+afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
+});
 
-    afterEach(async () => {
-        await financialMovementsModel.deleteMany({});
-    });
+afterEach(async () => {
+    await financialMovementsModel.deleteMany({});
+});
 
-    /*it("should create a new financial movement", async () => {
+describe("FinancialMovements API", () => {
+    it("should create a new financial movement", async () => {
         const res = await request(app)
-            .post(`/financialMovements/create`)
-            .send(mockedFMovements);
+            .post("/financialMovements/create")
+            .send({
+                financialMovementsData: {
+                    contaOrigem: "12345",
+                    contaDestino: "67890",
+                    nomeOrigem: "João Silva",
+                    nomeDestino: "Maria Souza",
+                    tipoDocumento: "Transferência",
+                    cpFCnpj: "123.456.789-00",
+                    valorBruto: 1000,
+                    valorLiquido: 950,
+                    acrescimo: 50,
+                    desconto: 0,
+                    formadePagamento: "PIX",
+                    datadeVencimento: new Date(),
+                    datadePagamento: new Date(),
+                    baixada: false,
+                    descricao: "Pagamento de serviço",
+                },
+            }); // Enviar os dados dentro de financialMovementsData
 
         expect(res.status).toBe(201);
-    });*/
+        expect(res.body).toHaveProperty("nomeOrigem", "João Silva");
+    });
 
     it("should get financial movement by id", async () => {
         const { body: createdFMovements } = await request(app)
             .post("/financialMovements/create")
             .send({
-                ...mockedFMovements,
+                financialMovementsData: {
+                    contaOrigem: "12345",
+                    contaDestino: "67890",
+                    nomeOrigem: "João Silva",
+                    nomeDestino: "Maria Souza",
+                    tipoDocumento: "Transferência",
+                    cpFCnpj: "123.456.789-00",
+                    valorBruto: 1000,
+                    valorLiquido: 950,
+                    acrescimo: 50,
+                    desconto: 0,
+                    formadePagamento: "PIX",
+                    datadeVencimento: new Date(),
+                    datadePagamento: new Date(),
+                    baixada: false,
+                    descricao: "Pagamento de serviço",
+                },
                 contaOrigem: "Get By ID Mock",
             });
 
@@ -89,7 +111,23 @@ describe("FinancialMovements Controller Tests", () => {
         const { body: createdFMovements } = await request(app)
             .post("/financialMovements/create")
             .send({
-                ...mockedFMovements,
+                financialMovementsData: {
+                    contaOrigem: "12345",
+                    contaDestino: "67890",
+                    nomeOrigem: "João Silva",
+                    nomeDestino: "Maria Souza",
+                    tipoDocumento: "Transferência",
+                    cpFCnpj: "123.456.789-00",
+                    valorBruto: 1000,
+                    valorLiquido: 950,
+                    acrescimo: 50,
+                    desconto: 0,
+                    formadePagamento: "PIX",
+                    datadeVencimento: new Date(),
+                    datadePagamento: new Date(),
+                    baixada: false,
+                    descricao: "Pagamento de serviço",
+                },
                 contaOrigem: "Delete By ID Mock",
             });
 
@@ -105,7 +143,23 @@ describe("FinancialMovements Controller Tests", () => {
         const { body: createdFMovements } = await request(app)
             .post("/financialMovements/create")
             .send({
-                ...mockedFMovements,
+                financialMovementsData: {
+                    contaOrigem: "12345",
+                    contaDestino: "67890",
+                    nomeOrigem: "João Silva",
+                    nomeDestino: "Maria Souza",
+                    tipoDocumento: "Transferência",
+                    cpFCnpj: "123.456.789-00",
+                    valorBruto: 1000,
+                    valorLiquido: 950,
+                    acrescimo: 50,
+                    desconto: 0,
+                    formadePagamento: "PIX",
+                    datadeVencimento: new Date(),
+                    datadePagamento: new Date(),
+                    baixada: false,
+                    descricao: "Pagamento de serviço",
+                },
                 contaOrigem: "Update By ID Mock",
             });
 
