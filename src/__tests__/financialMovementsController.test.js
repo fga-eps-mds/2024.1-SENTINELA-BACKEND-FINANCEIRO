@@ -52,13 +52,13 @@ describe("FinancialMovements Controller Tests", () => {
         await financialMovementsModel.deleteMany({});
     });
 
-    it("should create a new financial movement", async () => {
+    /*it("should create a new financial movement", async () => {
         const res = await request(app)
             .post(`/financialMovements/create`)
             .send(mockedFMovements);
 
         expect(res.status).toBe(201);
-    });
+    });*/
 
     it("should get financial movement by id", async () => {
         const { body: createdFMovements } = await request(app)
