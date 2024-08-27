@@ -13,10 +13,18 @@ const {
     MONGO_URI,
     DB_HOST,
     PORT,
+    FRONT_HOST,
 } = process.env;
 
 const corsOption = {
-    origin: "*",
+    origin: (origin, callback) => {
+        const allowedOrigin = FRONT_HOST || "localhost";
+        if (origin?.includes(allowedOrigin) || origin === undefined) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 };
 
