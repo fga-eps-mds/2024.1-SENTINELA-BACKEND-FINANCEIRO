@@ -133,30 +133,6 @@ describe("BankAccount API", () => {
         expect(response.status).toBe(500);
     });
     it("should fetch all bank accounts", async () => {
-        await request(app)
-            .post("/finance/createBankAccount") // Atualize o caminho da rota
-            .send({
-                formData: {
-                    name: "Conta Teste 1",
-                    bank: "Banco Teste 1",
-                    accountNumber: "11111111",
-                    status: "Ativo",
-                    accountType: "Conta Corrente",
-                },
-            });
-
-        await request(app)
-            .post("/finance/createBankAccount") // Atualize o caminho da rota
-            .send({
-                formData: {
-                    name: "Conta Teste 2",
-                    bank: "Banco Teste 2",
-                    accountNumber: "22222222",
-                    status: "Ativo",
-                    accountType: "Conta Corrente",
-                },
-            });
-
         const response = await request(app).get("/finance/getBankAccount"); // Atualize o caminho da rota
 
         console.log("Fetch All Response:", response.body); // Adicione um log para depuração

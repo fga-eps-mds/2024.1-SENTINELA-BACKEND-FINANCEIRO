@@ -100,7 +100,6 @@ const updateBankAccount = async (req, res) => {
 
 module.exports = {
     createBankAccount,
-    getBankAccount,
     deleteBankAccount,
     getBankAccountbyId,
     updateBankAccount,
