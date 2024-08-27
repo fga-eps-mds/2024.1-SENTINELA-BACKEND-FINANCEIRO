@@ -44,30 +44,6 @@ const getAll = async (req, res) => {
     }
 };
 
-const getBankAccount = async (req, res) => {
-    try {
-        // Retorna apenas a conta bancária do nome fornecido
-        if (req.query.name) {
-            const bankAccount = await BankAccount.findOne({
-                name: req.query.name,
-            });
-
-            if (bankAccount) {
-                return res.status(200).json(bankAccount);
-            } else {
-                return res
-                    .status(404)
-                    .json({ message: "Conta não encontrada" });
-            }
-        } else {
-            return res.status(400).json({ message: "Nome não fornecido" });
-        }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Erro interno do servidor" });
-    }
-};
-
 const getBankAccountbyId = async (req, res) => {
     try {
         const bankAccount = await BankAccount.findById(req.params.id); // Buscando conta pelo ID

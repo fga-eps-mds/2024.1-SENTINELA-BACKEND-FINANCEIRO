@@ -12,7 +12,6 @@ routes.post(
     "/finance/createBankAccount",
     bankAccountController.createBankAccount
 );
-routes.get("/finance/bankAccount", bankAccountController.getBankAccount);
 routes.get(
     "/finance/bankAccount/:id",
     bankAccountController.getBankAccountbyId
