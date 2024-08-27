@@ -6,7 +6,7 @@ const createSupplierForm = async (req, res) => {
         message = util.validator(req.body.supplierData);
 
         if (message) {
-            return res.status(404).send({ erro: message });
+            return res.status(400).send({ erro: message });
         }
 
         const supplier = new SupplierForm(req.body.supplierData);
