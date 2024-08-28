@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const routes = require("./routes");
+const { generateFinancialReportPDF } = require("./Models/pdfGenerator");
 
 const app = express();
 
@@ -20,6 +21,12 @@ const corsOption = {
     },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 };
+
+app.get("/download-financial-report", async (req, res) => {
+    const financialMovements = await getFinancialMovementsFromDatabase(); // Função que busca as movimentações financeiras do banco de dados
+
+    generateFinancialReportPDF(financialMovements, res);
+});
 
 // Aplicar o middleware CORS antes das rotas
 app.use(cors(corsOption));
