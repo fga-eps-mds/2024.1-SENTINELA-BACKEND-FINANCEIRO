@@ -10,8 +10,7 @@ const { generateFinancialReportCSV } = require("./Models/csvGenerator");
 const app = express();
 
 // Variáveis de ambiente
-const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT, FRONT_HOST } =
-    process.env;
+const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT } = process.env;
 
 console.log("Ambiente:", NODE_ENV);
 console.log("MONGO_URI:", MONGO_URI);
