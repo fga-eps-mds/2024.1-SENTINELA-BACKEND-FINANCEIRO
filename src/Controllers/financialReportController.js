@@ -1,6 +1,8 @@
 const path = require("path");
 const FinancialMovements = require("../Models/financialMovementsSchema");
 const { generateFinancialReportPDF } = require("../Models/pdfGenerator");
+const { generateFinancialReportCSV } = require("../Models/csvGenerator");
+
 const fs = require("fs");
 
 const ensureDirectoryExistence = (filePath) => {
@@ -10,7 +12,7 @@ const ensureDirectoryExistence = (filePath) => {
     }
 };
 
-const generatePDFReport = async (req, res) => {
+const generateFinancialReport = async (req, res) => {
     try {
         console.log(
             "Iniciando o processo de geração de relatório financeiro..."
@@ -24,23 +26,14 @@ const generatePDFReport = async (req, res) => {
             sitPagamento,
             dataInicio,
             dataFinal,
+            formArquivo, // PDF ou CSV
         } = req.body;
 
-        console.log("Parâmetros recebidos:");
-        console.log("Fornecedor:", fornecedor);
-        console.log("Tipo de Lançamento:", tipoLancamento);
-        console.log("Tipo de Documento:", tipoDocumento);
-        console.log("Conta Bancária:", contaBancaria);
-        console.log("Situação de Pagamento:", sitPagamento);
-        console.log("Data de Início:", dataInicio);
-        console.log("Data Final:", dataFinal);
-
-        // Mapear 'contaBancaria' para 'nomeDestino'
         const query = {
             ...(fornecedor && { nomeOrigem: fornecedor }),
             ...(tipoLancamento && { tipoLancamento }),
             ...(tipoDocumento && { tipoDocumento }),
-            ...(contaBancaria && { nomeDestino: contaBancaria }), // Substituído aqui
+            ...(contaBancaria && { nomeDestino: contaBancaria }),
             ...(sitPagamento && { sitPagamento }),
             ...(dataInicio && {
                 datadeVencimento: { $gte: new Date(dataInicio) },
@@ -58,54 +51,57 @@ const generatePDFReport = async (req, res) => {
             "Movimentações financeiras encontradas:",
             financialMovements.length
         );
-        console.log(
-            "Detalhes das movimentações financeiras:",
-            financialMovements
-        );
 
-        const filePath = path.join(
-            __dirname,
-            `../../PDF`,
-            `financial_report.pdf`
-        );
-        ensureDirectoryExistence(filePath);
-        console.log("Caminho para salvar o PDF gerado:", filePath);
-
-        await generateFinancialReportPDF(financialMovements, filePath);
-        console.log("PDF gerado com sucesso!");
-
-        if (fs.existsSync(filePath)) {
-            console.log(
-                "PDF foi gerado e está disponível no caminho:",
-                filePath
+        // Verificar qual formato de arquivo foi solicitado
+        if (formArquivo === "PDF") {
+            const filePath = path.join(
+                __dirname,
+                `../../PDF`,
+                `financial_report.pdf`
             );
+            ensureDirectoryExistence(filePath);
+            await generateFinancialReportPDF(financialMovements, filePath);
+
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename=financial_report.pdf`
+            );
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    console.error("Erro ao enviar o arquivo:", err);
+                    res.status(500).send("Erro ao enviar o arquivo.");
+                }
+                fs.unlinkSync(filePath); // Remover arquivo após envio
+            });
+        } else if (formArquivo === "CSV") {
+            const filePath = path.join(
+                __dirname,
+                `../../CSV`,
+                `financial_report.csv`
+            );
+            ensureDirectoryExistence(filePath);
+            await generateFinancialReportCSV(financialMovements, filePath);
+
+            res.setHeader("Content-Type", "text/csv");
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename=financial_report.csv`
+            );
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    console.error("Erro ao enviar o arquivo:", err);
+                    res.status(500).send("Erro ao enviar o arquivo.");
+                }
+                fs.unlinkSync(filePath); // Remover arquivo após envio
+            });
         } else {
-            console.error("O PDF não foi gerado corretamente.");
+            res.status(400).send("Formato de arquivo inválido.");
         }
-
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", `attachment; filename=report.pdf`);
-
-        console.log("Enviando o arquivo PDF gerado...");
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                console.error("Erro ao enviar o arquivo:", err);
-                res.status(500).send("Erro ao enviar o arquivo.");
-            } else {
-                console.log("Arquivo PDF enviado com sucesso!");
-            }
-
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-                console.log("Arquivo PDF removido.");
-            } else {
-                console.error("O arquivo PDF não existe para ser removido.");
-            }
-        });
     } catch (error) {
         console.error("Erro ao gerar o relatório financeiro:", error);
         res.status(500).send("Erro ao gerar o relatório financeiro.");
     }
 };
 
-module.exports = { generatePDFReport };
+module.exports = { generateFinancialReport };

@@ -62,7 +62,7 @@ routes.patch(
 );
 routes.post(
     "/financialMovements/report",
-    financialReportController.generatePDFReport
+    financialReportController.generateFinancialReport
 );
 
 // Rotas Públicas
