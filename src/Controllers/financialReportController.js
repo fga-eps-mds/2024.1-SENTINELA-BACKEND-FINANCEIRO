@@ -54,7 +54,7 @@ const generateFinancialReport = async (req, res) => {
             ...(nomeDestino && { nomeDestino }),
             ...(sitPagamento && { sitPagamento }),
             ...(dataInicio && {
-                datadeVencimento: { $gte: new Date(dataInicio) },
+                datadePagamento: { $gte: new Date(dataInicio) },
             }),
             ...(dataFinal && {
                 datadeVencimento: { $lte: new Date(dataFinal) },
