@@ -1,6 +1,15 @@
 const fs = require("fs");
 const { parse } = require("json2csv");
 
+const formatNumericDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
 const generateFinancialReportCSV = (financialMovements, filePath) => {
     return new Promise((resolve, reject) => {
         try {
@@ -13,8 +22,14 @@ const generateFinancialReportCSV = (financialMovements, filePath) => {
                 { label: "Valor Bruto", value: "valorBruto" },
                 { label: "Valor Líquido", value: "valorLiquido" },
                 { label: "Forma de Pagamento", value: "formadePagamento" },
-                { label: "Data de Vencimento", value: "datadeVencimento" },
-                { label: "Data de Pagamento", value: "datadePagamento" },
+                {
+                    label: "Data de Vencimento",
+                    value: (row) => formatNumericDate(row.datadeVencimento),
+                },
+                {
+                    label: "Data de Pagamento",
+                    value: (row) => formatNumericDate(row.datadePagamento),
+                },
                 {
                     label: "Situação de Pagamento",
                     value: (row) => (row.baixada ? "Pago" : "Não pago"),
