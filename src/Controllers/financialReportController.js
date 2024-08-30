@@ -2,7 +2,6 @@ const path = require("path");
 const FinancialMovements = require("../Models/financialMovementsSchema");
 const { generateFinancialReportPDF } = require("../Models/pdfGenerator");
 const { generateFinancialReportCSV } = require("../Models/csvGenerator");
-
 const fs = require("fs");
 
 const ensureDirectoryExistence = (filePath) => {
@@ -12,6 +11,22 @@ const ensureDirectoryExistence = (filePath) => {
     }
 };
 
+const sendAndDeleteFile = (res, filePath, contentType) => {
+    res.setHeader("Content-Type", contentType);
+    res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${path.basename(filePath)}`
+    );
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error("Erro ao enviar o arquivo:", err);
+            res.status(500).send("Erro ao enviar o arquivo.");
+        } else {
+            fs.unlinkSync(filePath); // Remover arquivo após envio
+        }
+    });
+};
+
 const generateFinancialReport = async (req, res) => {
     try {
         console.log(
@@ -19,21 +34,24 @@ const generateFinancialReport = async (req, res) => {
         );
 
         const {
-            fornecedor,
-            tipoLancamento,
+            contaOrigem,
+            contaDestino,
+            nomeOrigem,
+            nomeDestino,
             tipoDocumento,
-            contaBancaria,
             sitPagamento,
+            formArquivo,
             dataInicio,
             dataFinal,
-            formArquivo, // PDF ou CSV
         } = req.body;
 
+        // Construir a consulta incluindo contaOrigem e contaDestino
         const query = {
-            ...(fornecedor && { nomeOrigem: fornecedor }),
-            ...(tipoLancamento && { tipoLancamento }),
+            ...(nomeOrigem && { nomeOrigem }),
+            ...(contaOrigem && { contaOrigem }),
+            ...(contaDestino && { contaDestino }),
             ...(tipoDocumento && { tipoDocumento }),
-            ...(contaBancaria && { nomeDestino: contaBancaria }),
+            ...(nomeDestino && { nomeDestino }),
             ...(sitPagamento && { sitPagamento }),
             ...(dataInicio && {
                 datadeVencimento: { $gte: new Date(dataInicio) },
@@ -52,49 +70,31 @@ const generateFinancialReport = async (req, res) => {
             financialMovements.length
         );
 
-        // Verificar qual formato de arquivo foi solicitado
+        if (financialMovements.length === 0) {
+            return res
+                .status(404)
+                .send("Nenhuma movimentação financeira encontrada.");
+        }
+
+        let filePath;
         if (formArquivo === "PDF") {
-            const filePath = path.join(
+            filePath = path.join(
                 __dirname,
                 `../../PDF`,
                 `financial_report.pdf`
             );
             ensureDirectoryExistence(filePath);
             await generateFinancialReportPDF(financialMovements, filePath);
-
-            res.setHeader("Content-Type", "application/pdf");
-            res.setHeader(
-                "Content-Disposition",
-                `attachment; filename=financial_report.pdf`
-            );
-            res.sendFile(filePath, (err) => {
-                if (err) {
-                    console.error("Erro ao enviar o arquivo:", err);
-                    res.status(500).send("Erro ao enviar o arquivo.");
-                }
-                fs.unlinkSync(filePath); // Remover arquivo após envio
-            });
+            sendAndDeleteFile(res, filePath, "application/pdf");
         } else if (formArquivo === "CSV") {
-            const filePath = path.join(
+            filePath = path.join(
                 __dirname,
                 `../../CSV`,
                 `financial_report.csv`
             );
             ensureDirectoryExistence(filePath);
             await generateFinancialReportCSV(financialMovements, filePath);
-
-            res.setHeader("Content-Type", "text/csv");
-            res.setHeader(
-                "Content-Disposition",
-                `attachment; filename=financial_report.csv`
-            );
-            res.sendFile(filePath, (err) => {
-                if (err) {
-                    console.error("Erro ao enviar o arquivo:", err);
-                    res.status(500).send("Erro ao enviar o arquivo.");
-                }
-                fs.unlinkSync(filePath); // Remover arquivo após envio
-            });
+            sendAndDeleteFile(res, filePath, "text/csv");
         } else {
             res.status(400).send("Formato de arquivo inválido.");
         }
