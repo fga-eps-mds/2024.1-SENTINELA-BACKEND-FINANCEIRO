@@ -27,6 +27,14 @@ const sendAndDeleteFile = (res, filePath, contentType) => {
     });
 };
 
+// Função simples de sanitização
+const sanitizeInput = (input) => {
+    if (typeof input === "string") {
+        return input.replace(/[^\w\s\-.,@]/g, ""); // Remover caracteres perigosos, mantendo letras, números, espaços, etc.
+    }
+    return input;
+};
+
 const generateFinancialReport = async (req, res) => {
     try {
         console.log(
@@ -45,14 +53,28 @@ const generateFinancialReport = async (req, res) => {
             dataFinal,
         } = req.body;
 
+        // Sanitizar entradas
+        const sanitizedNomeOrigem = sanitizeInput(nomeOrigem);
+        const sanitizedContaOrigem = sanitizeInput(contaOrigem);
+        const sanitizedContaDestino = sanitizeInput(contaDestino);
+        const sanitizedNomeDestino = sanitizeInput(nomeDestino);
+        const sanitizedTipoDocumento = sanitizeInput(tipoDocumento);
+        const sanitizedSitPagamento = sanitizeInput(sitPagamento);
+
         // Construir a consulta incluindo contaOrigem e contaDestino
         const query = {
-            ...(nomeOrigem && { nomeOrigem }),
-            ...(contaOrigem && { contaOrigem }),
-            ...(contaDestino && { contaDestino }),
-            ...(tipoDocumento && { tipoDocumento }),
-            ...(nomeDestino && { nomeDestino }),
-            ...(sitPagamento && { sitPagamento }),
+            ...(sanitizedNomeOrigem && { nomeOrigem: sanitizedNomeOrigem }),
+            ...(sanitizedContaOrigem && { contaOrigem: sanitizedContaOrigem }),
+            ...(sanitizedContaDestino && {
+                contaDestino: sanitizedContaDestino,
+            }),
+            ...(sanitizedTipoDocumento && {
+                tipoDocumento: sanitizedTipoDocumento,
+            }),
+            ...(sanitizedNomeDestino && { nomeDestino: sanitizedNomeDestino }),
+            ...(sanitizedSitPagamento && {
+                sitPagamento: sanitizedSitPagamento,
+            }),
             ...(dataInicio && {
                 datadePagamento: { $gte: new Date(dataInicio) },
             }),
