@@ -1,5 +1,8 @@
 const fs = require("fs");
-const { generateFinancialReportCSV } = require("../Models/csvGenerator");
+const {
+    generateFinancialReportCSV,
+    formatNumericDate,
+} = require("../Models/csvGenerator");
 const { parse } = require("json2csv");
 
 jest.mock("fs");
@@ -57,5 +60,29 @@ describe("generateFinancialReportCSV", () => {
         ).rejects.toThrow("Erro ao gerar CSV");
 
         expect(fs.writeFileSync).not.toHaveBeenCalled();
+    });
+    describe("formatNumericDate", () => {
+        it("deve formatar uma data válida no formato DD/MM/YYYY", () => {
+            const date = "2024-01-10T00:00:00.000Z";
+            const formattedDate = formatNumericDate(date);
+            expect(formattedDate).toBe("10/01/2024");
+        });
+
+        it("deve retornar uma string vazia se a data for inválida", () => {
+            const formattedDate = formatNumericDate(null);
+            expect(formattedDate).toBe("");
+        });
+
+        it("deve lidar corretamente com uma data do tipo Date", () => {
+            const date = new Date("2024-01-10T00:00:00.000Z");
+            const formattedDate = formatNumericDate(date);
+            expect(formattedDate).toBe("10/01/2024");
+        });
+
+        it("deve lidar corretamente com uma string de data no formato local", () => {
+            const date = "2024-01-10";
+            const formattedDate = formatNumericDate(date);
+            expect(formattedDate).toBe("10/01/2024");
+        });
     });
 });
