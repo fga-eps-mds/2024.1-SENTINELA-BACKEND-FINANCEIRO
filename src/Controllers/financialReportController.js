@@ -62,26 +62,28 @@ const generateFinancialReport = async (req, res) => {
         const sanitizedSitPagamento = sanitizeInput(sitPagamento);
 
         // Construir a consulta incluindo contaOrigem e contaDestino
-        const query = {
-            ...(sanitizedNomeOrigem && { nomeOrigem: sanitizedNomeOrigem }),
-            ...(sanitizedContaOrigem && { contaOrigem: sanitizedContaOrigem }),
-            ...(sanitizedContaDestino && {
-                contaDestino: sanitizedContaDestino,
-            }),
-            ...(sanitizedTipoDocumento && {
-                tipoDocumento: sanitizedTipoDocumento,
-            }),
-            ...(sanitizedNomeDestino && { nomeDestino: sanitizedNomeDestino }),
-            ...(sanitizedSitPagamento && {
-                sitPagamento: sanitizedSitPagamento,
-            }),
-            ...(dataInicio && {
-                datadePagamento: { $gte: new Date(dataInicio) },
-            }),
-            ...(dataFinal && {
-                datadeVencimento: { $lte: new Date(dataFinal) },
-            }),
-        };
+        const query = {};
+
+        // Adiciona os outros parâmetros da consulta se estiverem presentes
+        if (sanitizedNomeOrigem) query.nomeOrigem = sanitizedNomeOrigem;
+        if (sanitizedContaOrigem) query.contaOrigem = sanitizedContaOrigem;
+        if (sanitizedContaDestino) query.contaDestino = sanitizedContaDestino;
+        if (sanitizedTipoDocumento)
+            query.tipoDocumento = sanitizedTipoDocumento;
+        if (sanitizedNomeDestino) query.nomeDestino = sanitizedNomeDestino;
+        if (sanitizedSitPagamento) query.sitPagamento = sanitizedSitPagamento;
+
+        // Trata as datas de pagamento corretamente
+        if (dataInicio && !dataFinal) {
+            query.datadePagamento = { $gte: new Date(dataInicio) };
+        } else if (!dataInicio && dataFinal) {
+            query.datadePagamento = { $lte: new Date(dataFinal) };
+        } else if (dataInicio && dataFinal) {
+            query.datadePagamento = {
+                $gte: new Date(dataInicio),
+                $lte: new Date(dataFinal),
+            };
+        }
 
         console.log("Consulta gerada para o banco de dados:", query);
 
