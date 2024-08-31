@@ -17,7 +17,19 @@ console.log("MONGO_URI:", MONGO_URI);
 console.log("OFFICIAL_MONGO_URI:", OFFICIAL_MONGO_URI);
 
 // Middleware
-app.use(cors());
+const allowedOrigins = ["http://localhost:5173"];
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+    })
+);
+
 app.use(bodyParser.json());
 
 const getFinancialMovementsFromDatabase = async () => {
