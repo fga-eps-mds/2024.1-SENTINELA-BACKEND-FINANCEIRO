@@ -16,11 +16,15 @@ const createBankAccount = async (req, res) => {
         }
 
         // Verifica se já existe uma conta bancária com o mesmo nome
-        const existingName = await BankAccount.findOne({ name });
+        if (typeof name == "string") {
+            const existingName = await BankAccount.findOne({ name });
 
-        if (existingName) {
-            // Mensagem de erro se o nome já estiver repetido
-            return res.status(409).send({ error: "Nome já cadastrado" }); // Código 409 para conflito
+            if (existingName) {
+                // Mensagem de erro se o nome já estiver repetido
+                return res.status(409).send({ error: "Nome já cadastrado" }); // Código 409 para conflito
+            }
+        } else {
+            return res.status(500).send({ error: "Tipo de dado incorreto" });
         }
 
         // Criação de uma nova conta bancária
