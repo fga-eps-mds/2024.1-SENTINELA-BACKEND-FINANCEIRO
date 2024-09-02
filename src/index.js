@@ -16,12 +16,6 @@ console.log("Ambiente:", NODE_ENV);
 console.log("MONGO_URI:", MONGO_URI);
 console.log("OFFICIAL_MONGO_URI:", OFFICIAL_MONGO_URI);
 
-// Middleware
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://devel--appsentinela.netlify.app",
-    "https://appsentinela.netlify.app",
-];
 app.use(cors());
 
 app.use(bodyParser.json());
