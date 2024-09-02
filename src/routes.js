@@ -4,6 +4,7 @@ const newController = require("./Controllers/newController");
 const bankAccountController = require("./Controllers/bankAccountController");
 const supplierFormController = require("./Controllers/supplierFormController");
 const financialMovementsController = require("./Controllers/financialMovementsController");
+const financialReportController = require("./Controllers/financialReportController");
 
 // Rotas Privadas (Comentadas por enquanto, você pode descomentar quando implementar a validação de token)
 // router.get('/finance', tokenValidation, ???.getUsers);
@@ -58,6 +59,10 @@ routes.delete(
 routes.patch(
     "/financialMovements/update/:id",
     financialMovementsController.updateFinancialMovementsById
+);
+routes.post(
+    "/financialMovements/report",
+    financialReportController.generateFinancialReport
 );
 
 // Rotas Públicas

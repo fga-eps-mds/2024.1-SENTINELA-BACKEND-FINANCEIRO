@@ -3,59 +3,76 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const routes = require("./routes");
+const FinancialMovements = require("./Models/financialMovementsSchema");
+const { generateFinancialReportPDF } = require("./Models/pdfGenerator");
+const { generateFinancialReportCSV } = require("./Models/csvGenerator");
 
 const app = express();
 
-const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT, FRONT_HOST } =
-    process.env;
+// Variáveis de ambiente
+const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT } = process.env;
 
-const corsOption = {
-    origin: (origin, callback) => {
-        const allowedOrigin = FRONT_HOST || "localhost";
-        if (origin?.includes(allowedOrigin) || origin === undefined) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-};
+console.log("Ambiente:", NODE_ENV);
+console.log("MONGO_URI:", MONGO_URI);
+console.log("OFFICIAL_MONGO_URI:", OFFICIAL_MONGO_URI);
 
-// Aplicar o middleware CORS antes das rotas
-app.use(cors(corsOption));
+// Middleware
+const allowedOrigins = ["http://localhost:5173"];
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+    })
+);
 
-// Middleware para parsear JSON
 app.use(bodyParser.json());
 
-// Conect to MongoB
-let url;
-if (NODE_ENV === "development") {
-    url = MONGO_URI;
-} else {
-    url = OFFICIAL_MONGO_URI;
-}
+const getFinancialMovementsFromDatabase = async () => {
+    try {
+        const financialMovements = await FinancialMovements.find(); // Verifique se este modelo está correto
+        return financialMovements;
+    } catch (error) {
+        console.error("Erro ao buscar movimentações financeiras:", error);
+        throw error;
+    }
+};
+
+app.get("/download-financial-report", async (req, res) => {
+    try {
+        const { format } = req.query;
+        console.log("Format:", format);
+        const financialMovements = await getFinancialMovementsFromDatabase();
+        if (format === "PDF") {
+            await generateFinancialReportPDF(financialMovements, res);
+        } else if (format === "CSV") {
+            await generateFinancialReportCSV(financialMovements, res);
+        } else {
+            res.status(400).send("Formato inválido. Use 'PDF' ou 'CSV'.");
+        }
+    } catch (error) {
+        console.error("Erro ao gerar o relatório financeiro:", error);
+        res.status(500).send("Erro ao gerar o relatório financeiro.");
+    }
+});
 
 mongoose
-    .connect(url)
+    .connect(NODE_ENV === "development" ? MONGO_URI : OFFICIAL_MONGO_URI)
     .then(() => {
         console.log("Conectado ao MongoDB");
-
-        // Rotas import
         app.use(routes);
-
-        // Route test
         app.get("/", (req, res) => {
             res.send("Hello, world!");
         });
-
         app.listen(PORT, () => {
             console.log(`Servidor rodando na porta ${PORT}`);
-            console.log("NODE_ENV:", NODE_ENV);
         });
     })
     .catch((err) => {
         console.error("Erro ao conectar ao MongoDB", err);
         process.exit(1);
     });
-
-module.exports = app;
