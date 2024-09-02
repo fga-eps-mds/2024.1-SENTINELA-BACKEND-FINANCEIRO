@@ -10,29 +10,28 @@ const { generateFinancialReportCSV } = require("./Models/csvGenerator");
 const app = express();
 
 // Variáveis de ambiente
-const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT } = process.env;
+const { NODE_ENV, MONGO_URI, OFFICIAL_MONGO_URI, PORT, FRONT_HOST } =
+    process.env;
 
 console.log("Ambiente:", NODE_ENV);
 console.log("MONGO_URI:", MONGO_URI);
 console.log("OFFICIAL_MONGO_URI:", OFFICIAL_MONGO_URI);
 
 // Middleware
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://devel--appsentinela.netlify.app",
-    "https://appsentinela.netlify.app",
-];
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
-    })
-);
+const corsOption = {
+    origin: (origin, callback) => {
+        const allowedOrigin = FRONT_HOST || "localhost";
+        if (origin?.includes(allowedOrigin) || origin === undefined) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+};
+
+// Aplicar o middleware CORS antes das rotas
+app.use(cors(corsOption));
 
 app.use(bodyParser.json());
 
