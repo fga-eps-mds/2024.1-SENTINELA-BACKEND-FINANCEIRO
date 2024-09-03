@@ -51,6 +51,7 @@ const generateFinancialReport = async (req, res) => {
             formArquivo,
             dataInicio,
             dataFinal,
+            includeFields, // Incluído para seleção de campos
         } = req.body;
 
         // Sanitizar entradas
@@ -100,6 +101,24 @@ const generateFinancialReport = async (req, res) => {
                 .send("Nenhuma movimentação financeira encontrada.");
         }
 
+        // Transformar includeFields de objeto para array
+        let includeFieldsArray = Object.keys(includeFields).filter(
+            (key) => includeFields[key] === true
+        );
+
+        // Certifique-se de que contaOrigem, contaDestino, nomeOrigem e nomeDestino sempre estejam incluídos e no início do array
+        const mandatoryFields = [
+            "contaOrigem",
+            "contaDestino",
+            "nomeOrigem",
+            "nomeDestino",
+        ];
+        includeFieldsArray = mandatoryFields.concat(
+            includeFieldsArray.filter(
+                (field) => !mandatoryFields.includes(field)
+            )
+        );
+
         let filePath;
         if (formArquivo === "PDF") {
             filePath = path.join(
@@ -108,7 +127,11 @@ const generateFinancialReport = async (req, res) => {
                 `financial_report.pdf`
             );
             ensureDirectoryExistence(filePath);
-            await generateFinancialReportPDF(financialMovements, filePath);
+            await generateFinancialReportPDF(
+                financialMovements,
+                filePath,
+                includeFieldsArray
+            ); // Passa includeFieldsArray para a função PDF
             sendAndDeleteFile(res, filePath, "application/pdf");
         } else if (formArquivo === "CSV") {
             filePath = path.join(
@@ -117,7 +140,11 @@ const generateFinancialReport = async (req, res) => {
                 `financial_report.csv`
             );
             ensureDirectoryExistence(filePath);
-            await generateFinancialReportCSV(financialMovements, filePath);
+            await generateFinancialReportCSV(
+                financialMovements,
+                filePath,
+                includeFieldsArray
+            ); // Passa includeFieldsArray para a função CSV
             sendAndDeleteFile(res, filePath, "text/csv");
         } else {
             res.status(400).send("Formato de arquivo inválido.");
