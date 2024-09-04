@@ -19,20 +19,16 @@ const generateFinancialReportCSV = (
         try {
             // Define todos os campos possíveis
             const allFields = {
-                contaOrigem: { label: "Conta Origem", value: "contaOrigem" },
-                contaDestino: { label: "Conta Destino", value: "contaDestino" },
-                nomeOrigem: { label: "Nome Origem", value: "nomeOrigem" },
-                nomeDestino: { label: "Nome Destino", value: "nomeDestino" },
                 tipoDocumento: {
                     label: "Tipo Documento",
                     value: "tipoDocumento",
                 },
                 valorBruto: { label: "Valor Bruto", value: "valorBruto" },
                 valorLiquido: { label: "Valor Líquido", value: "valorLiquido" },
-                formaPagamento: {
-                    label: "Forma de Pagamento",
-                    value: "formadePagamento",
-                },
+                contaOrigem: { label: "Conta Origem", value: "contaOrigem" },
+                nomeOrigem: { label: "Nome Origem", value: "nomeOrigem" },
+                contaDestino: { label: "Conta Destino", value: "contaDestino" },
+                nomeDestino: { label: "Nome Destino", value: "nomeDestino" },
                 dataVencimento: {
                     label: "Data de Vencimento",
                     value: (row) => formatNumericDate(row.datadeVencimento),
@@ -41,6 +37,10 @@ const generateFinancialReportCSV = (
                     label: "Data de Pagamento",
                     value: (row) => formatNumericDate(row.datadePagamento),
                 },
+                formaPagamento: {
+                    label: "Forma de Pagamento",
+                    value: "formadePagamento",
+                },
                 sitPagamento: {
                     label: "Situação de Pagamento",
                     value: (row) => (row.baixada ? "Pago" : "Não pago"),
@@ -48,9 +48,25 @@ const generateFinancialReportCSV = (
                 descricao: { label: "Descrição", value: "descricao" },
             };
 
-            // Filtra os campos com base no array `includeFields`
-            const fields = includeFields
-                .filter((field) => allFields[field]) // Filtra para pegar apenas os campos selecionados
+            // Reorder the includeFields array based on the desired order
+            const orderedFields = [
+                "tipoDocumento",
+                "valorBruto",
+                "valorLiquido",
+                "contaOrigem",
+                "nomeOrigem",
+                "contaDestino",
+                "nomeDestino",
+                "dataVencimento",
+                "dataPagamento",
+                "formaPagamento",
+                "sitPagamento",
+                "descricao",
+            ];
+
+            // Filtra os campos com base no array `orderedFields`
+            const fields = orderedFields
+                .filter((field) => includeFields.includes(field)) // Filtra para pegar apenas os campos selecionados
                 .map((field) => allFields[field]); // Mapeia para o formato necessário pelo `json2csv`
 
             // Gera o CSV com os campos filtrados
