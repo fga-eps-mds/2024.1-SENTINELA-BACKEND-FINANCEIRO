@@ -30,7 +30,7 @@ const sendAndDeleteFile = (res, filePath, contentType) => {
 // Função simples de sanitização
 const sanitizeInput = (input) => {
     if (typeof input === "string") {
-        return input.replace(/[^\w\s\-.,@]/g, ""); // Remover caracteres perigosos, mantendo letras, números, espaços, etc.
+        return input; // Permite caracteres especiais
     }
     return input;
 };
@@ -51,10 +51,9 @@ const generateFinancialReport = async (req, res) => {
             formArquivo,
             dataInicio,
             dataFinal,
-            includeFields, // Incluído para seleção de campos
+            includeFields,
         } = req.body;
 
-        // Sanitizar entradas
         const sanitizedNomeOrigem = sanitizeInput(nomeOrigem);
         const sanitizedContaOrigem = sanitizeInput(contaOrigem);
         const sanitizedContaDestino = sanitizeInput(contaDestino);
@@ -62,19 +61,21 @@ const generateFinancialReport = async (req, res) => {
         const sanitizedTipoDocumento = sanitizeInput(tipoDocumento);
         const sanitizedSitPagamento = sanitizeInput(sitPagamento);
 
-        // Construir a consulta incluindo contaOrigem e contaDestino
         const query = {};
-
-        // Adiciona os outros parâmetros da consulta se estiverem presentes
         if (sanitizedNomeOrigem) query.nomeOrigem = sanitizedNomeOrigem;
         if (sanitizedContaOrigem) query.contaOrigem = sanitizedContaOrigem;
         if (sanitizedContaDestino) query.contaDestino = sanitizedContaDestino;
         if (sanitizedTipoDocumento)
             query.tipoDocumento = sanitizedTipoDocumento;
         if (sanitizedNomeDestino) query.nomeDestino = sanitizedNomeDestino;
-        if (sanitizedSitPagamento) query.sitPagamento = sanitizedSitPagamento;
+        if (sanitizedSitPagamento) {
+            if (sanitizedSitPagamento === "Pago") {
+                query.baixada = true;
+            } else if (sanitizedSitPagamento === "Não pago") {
+                query.baixada = false;
+            }
+        }
 
-        // Trata as datas de pagamento corretamente
         if (dataInicio && !dataFinal) {
             query.datadePagamento = { $gte: new Date(dataInicio) };
         } else if (!dataInicio && dataFinal) {
@@ -89,7 +90,6 @@ const generateFinancialReport = async (req, res) => {
         console.log("Consulta gerada para o banco de dados:", query);
 
         const financialMovements = await FinancialMovements.find(query);
-
         console.log(
             "Movimentações financeiras encontradas:",
             financialMovements.length
@@ -101,12 +101,10 @@ const generateFinancialReport = async (req, res) => {
                 .send("Nenhuma movimentação financeira encontrada.");
         }
 
-        // Transformar includeFields de objeto para array
         let includeFieldsArray = Object.keys(includeFields).filter(
             (key) => includeFields[key] === true
         );
 
-        // Certifique-se de que contaOrigem, contaDestino, nomeOrigem e nomeDestino sempre estejam incluídos e no início do array
         const mandatoryFields = [
             "contaOrigem",
             "contaDestino",
@@ -131,7 +129,7 @@ const generateFinancialReport = async (req, res) => {
                 financialMovements,
                 filePath,
                 includeFieldsArray
-            ); // Passa includeFieldsArray para a função PDF
+            );
             sendAndDeleteFile(res, filePath, "application/pdf");
         } else if (formArquivo === "CSV") {
             filePath = path.join(
@@ -144,7 +142,7 @@ const generateFinancialReport = async (req, res) => {
                 financialMovements,
                 filePath,
                 includeFieldsArray
-            ); // Passa includeFieldsArray para a função CSV
+            );
             sendAndDeleteFile(res, filePath, "text/csv");
         } else {
             res.status(400).send("Formato de arquivo inválido.");
