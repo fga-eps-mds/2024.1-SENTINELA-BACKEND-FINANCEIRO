@@ -22,8 +22,34 @@ describe("generateFinancialReportPDF", () => {
 
     const outputPath = path.join(__dirname, "test-report.pdf");
 
-    it("deve gerar um PDF e verificar o tamanho do arquivo", async () => {
-        await generateFinancialReportPDF(mockFinancialMovements, outputPath);
+    afterEach(() => {
+        // Limpar o arquivo de teste após cada execução
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
+    });
+
+    it("deve gerar um PDF com os campos selecionados e verificar o tamanho do arquivo", async () => {
+        const includeFields = [
+            "tipoDocumento",
+            "valorBruto",
+            "valorLiquido",
+            "contaOrigem",
+            "nomeOrigem",
+            "contaDestino",
+            "nomeDestino",
+            "dataVencimento",
+            "dataPagamento",
+            "formaPagamento",
+            "sitPagamento",
+            "descricao",
+        ];
+
+        await generateFinancialReportPDF(
+            mockFinancialMovements,
+            outputPath,
+            includeFields
+        );
 
         // Verifique se o arquivo foi criado
         expect(fs.existsSync(outputPath)).toBe(true);
@@ -33,8 +59,29 @@ describe("generateFinancialReportPDF", () => {
 
         // Verifique se o arquivo não está vazio e tem um tamanho razoável
         expect(fileSize).toBeGreaterThan(0);
+    });
 
-        // Limpar o arquivo de teste
-        fs.unlinkSync(outputPath);
+    it("deve gerar um PDF com um subconjunto de campos selecionados", async () => {
+        const includeFields = [
+            "tipoDocumento",
+            "valorBruto",
+            "contaOrigem",
+            "nomeDestino",
+        ];
+
+        await generateFinancialReportPDF(
+            mockFinancialMovements,
+            outputPath,
+            includeFields
+        );
+
+        // Verifique se o arquivo foi criado
+        expect(fs.existsSync(outputPath)).toBe(true);
+
+        // Obtenha o tamanho do arquivo
+        const fileSize = fs.statSync(outputPath).size;
+
+        // Verifique se o arquivo não está vazio e tem um tamanho razoável
+        expect(fileSize).toBeGreaterThan(0);
     });
 });
