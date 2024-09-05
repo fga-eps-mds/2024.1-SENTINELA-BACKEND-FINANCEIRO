@@ -76,11 +76,11 @@ const generateFinancialReport = async (req, res) => {
             }
         }
         if (dataInicio && !dataFinal) {
-            query.datadePagamento = { $gte: new Date(dataInicio) };
+            query.datadeVencimento = { $gte: new Date(dataInicio) };
         } else if (!dataInicio && dataFinal) {
-            query.datadePagamento = { $lte: new Date(dataFinal) };
+            query.datadeVencimento = { $lte: new Date(dataFinal) };
         } else if (dataInicio && dataFinal) {
-            query.datadePagamento = {
+            query.datadeVencimento = {
                 $gte: new Date(dataInicio),
                 $lte: new Date(dataFinal),
             };
