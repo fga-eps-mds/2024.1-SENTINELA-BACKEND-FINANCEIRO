@@ -69,12 +69,20 @@ const generateFinancialReport = async (req, res) => {
             query.tipoDocumento = sanitizedTipoDocumento;
         if (sanitizedNomeDestino) query.nomeDestino = sanitizedNomeDestino;
         if (sanitizedSitPagamento) {
+            const today = new Date(); // Data atual
+
             if (sanitizedSitPagamento === "Pago") {
-                query.datadePagamento = { $exists: true, $ne: null };
+                // Verifica se a data de pagamento existe e não é no futuro
+                query.datadePagamento = { $exists: true, $lte: today };
             } else if (sanitizedSitPagamento === "Não pago") {
-                query.datadePagamento = { $eq: null };
+                // Filtra os registros onde a data de pagamento é nula ou futura
+                query.$or = [
+                    { datadePagamento: { $eq: null } },
+                    { datadePagamento: { $gt: today } },
+                ];
             }
         }
+
         if (dataInicio && !dataFinal) {
             query.datadeVencimento = { $gte: new Date(dataInicio) };
         } else if (!dataInicio && dataFinal) {
