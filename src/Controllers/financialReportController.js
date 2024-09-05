@@ -70,12 +70,11 @@ const generateFinancialReport = async (req, res) => {
         if (sanitizedNomeDestino) query.nomeDestino = sanitizedNomeDestino;
         if (sanitizedSitPagamento) {
             if (sanitizedSitPagamento === "Pago") {
-                query.baixada = true;
+                query.datadePagamento = { $exists: true, $ne: null };
             } else if (sanitizedSitPagamento === "Não pago") {
-                query.baixada = false;
+                query.datadePagamento = { $eq: null };
             }
         }
-
         if (dataInicio && !dataFinal) {
             query.datadePagamento = { $gte: new Date(dataInicio) };
         } else if (!dataInicio && dataFinal) {
