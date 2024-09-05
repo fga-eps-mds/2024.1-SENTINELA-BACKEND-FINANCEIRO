@@ -131,13 +131,14 @@ const generateFinancialReportPDF = (
                     `Data de Pagamento: ${formatDate(movement.datadePagamento)}`
                 );
             }
+            if (includeFields.includes("sitPagamento")) {
+                const situacaoPagamento = movement.datadePagamento
+                    ? "Pago"
+                    : "Não pago";
+                doc.text(`Situação de Pagamento: ${situacaoPagamento}`);
+            }
             if (includeFields.includes("formaPagamento")) {
                 doc.text(`Forma de Pagamento: ${movement.formadePagamento}`);
-            }
-            if (includeFields.includes("sitPagamento")) {
-                doc.text(
-                    `Situação de Pagamento: ${movement.baixada ? "Pago" : "Não pago"}`
-                );
             }
             if (includeFields.includes("descricao")) {
                 doc.text(`Descrição: ${movement.descricao || "N/A"}`);

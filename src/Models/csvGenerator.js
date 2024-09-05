@@ -43,7 +43,7 @@ const generateFinancialReportCSV = (
                 },
                 sitPagamento: {
                     label: "Situação de Pagamento",
-                    value: (row) => (row.baixada ? "Pago" : "Não pago"),
+                    value: (row) => (row.datadePagamento ? "Pago" : "Não pago"),
                 },
                 descricao: { label: "Descrição", value: "descricao" },
             };
