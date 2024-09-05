@@ -44,16 +44,18 @@ const generateFinancialReportCSV = (
                 sitPagamento: {
                     label: "Situação de Pagamento",
                     value: (row) => {
-                        const dataAtual = new Date();
-                        const dataPagamento = new Date(row.dataDePagamento);
+                        const today = new Date(); // Data atual
+                        const paymentDate = row.datadePagamento
+                            ? new Date(row.datadePagamento)
+                            : null;
 
-                        // Verifica se a data de pagamento está preenchida e se é menor ou igual à data atual
-                        if (dataPagamento && dataPagamento <= dataAtual) {
-                            return "Pago";
-                        }
-                        return "Não pago";
+                        // Verifica se a data de pagamento é nula ou se é uma data futura
+                        return !paymentDate || paymentDate > today
+                            ? "Não pago"
+                            : "Pago";
                     },
                 },
+
                 descricao: { label: "Descrição", value: "descricao" },
             };
 

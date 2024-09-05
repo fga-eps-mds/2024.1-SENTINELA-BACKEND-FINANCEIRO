@@ -132,14 +132,14 @@ const generateFinancialReportPDF = (
                 );
             }
             if (includeFields.includes("sitPagamento")) {
-                const dataAtual = new Date();
-                const dataPagamento = new Date(movement.datadePagamento);
+                const today = new Date(); // Data atual
+                const paymentDate = movement.datadePagamento
+                    ? new Date(movement.datadePagamento)
+                    : null;
 
-                // Verifica se a data de pagamento está preenchida e se é menor ou igual à data atual
+                // Verifica se a data de pagamento é nula ou se é uma data futura
                 const situacaoPagamento =
-                    dataPagamento && dataPagamento <= dataAtual
-                        ? "Pago"
-                        : "Não pago";
+                    !paymentDate || paymentDate > today ? "Não pago" : "Pago";
 
                 doc.text(`Situação de Pagamento: ${situacaoPagamento}`);
             }
