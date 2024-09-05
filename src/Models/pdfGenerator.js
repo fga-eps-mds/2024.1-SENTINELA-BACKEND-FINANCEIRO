@@ -132,11 +132,18 @@ const generateFinancialReportPDF = (
                 );
             }
             if (includeFields.includes("sitPagamento")) {
-                const situacaoPagamento = movement.datadePagamento
-                    ? "Pago"
-                    : "Não pago";
+                const dataAtual = new Date();
+                const dataPagamento = new Date(movement.datadePagamento);
+
+                // Verifica se a data de pagamento está preenchida e se é menor ou igual à data atual
+                const situacaoPagamento =
+                    dataPagamento && dataPagamento <= dataAtual
+                        ? "Pago"
+                        : "Não pago";
+
                 doc.text(`Situação de Pagamento: ${situacaoPagamento}`);
             }
+
             if (includeFields.includes("formaPagamento")) {
                 doc.text(`Forma de Pagamento: ${movement.formadePagamento}`);
             }

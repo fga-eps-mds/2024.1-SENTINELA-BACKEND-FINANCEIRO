@@ -51,7 +51,6 @@ const financialMovementsSchema = new mongoose.Schema({
             "Cheque",
             "Depósito",
         ],
-        required: true,
     },
     datadeVencimento: {
         type: Date,
