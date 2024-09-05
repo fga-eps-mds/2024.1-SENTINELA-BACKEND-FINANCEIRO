@@ -145,7 +145,11 @@ const generateFinancialReportPDF = (
             }
 
             if (includeFields.includes("formaPagamento")) {
-                doc.text(`Forma de Pagamento: ${movement.formadePagamento}`);
+                !movement.formadePagamento
+                    ? doc.text(`Forma de Pagamento: N/A`)
+                    : doc.text(
+                          `Forma de Pagamento: ${movement.formadePagamento}`
+                      );
             }
             if (includeFields.includes("descricao")) {
                 doc.text(`Descrição: ${movement.descricao || "N/A"}`);
