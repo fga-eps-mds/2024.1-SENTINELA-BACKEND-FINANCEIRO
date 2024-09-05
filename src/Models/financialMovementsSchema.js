@@ -51,7 +51,6 @@ const financialMovementsSchema = new mongoose.Schema({
             "Cheque",
             "Depósito",
         ],
-        required: true,
     },
     datadeVencimento: {
         type: Date,
@@ -61,7 +60,6 @@ const financialMovementsSchema = new mongoose.Schema({
     datadePagamento: {
         type: Date,
         default: Date.now,
-        required: true,
     },
     baixada: {
         type: Boolean,

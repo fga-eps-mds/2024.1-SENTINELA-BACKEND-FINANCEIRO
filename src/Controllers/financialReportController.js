@@ -30,7 +30,7 @@ const sendAndDeleteFile = (res, filePath, contentType) => {
 // Função simples de sanitização
 const sanitizeInput = (input) => {
     if (typeof input === "string") {
-        return input.replace(/[^\w\s\-.,@]/g, ""); // Remover caracteres perigosos, mantendo letras, números, espaços, etc.
+        return input; // Permite caracteres especiais
     }
     return input;
 };
@@ -51,9 +51,9 @@ const generateFinancialReport = async (req, res) => {
             formArquivo,
             dataInicio,
             dataFinal,
+            includeFields,
         } = req.body;
 
-        // Sanitizar entradas
         const sanitizedNomeOrigem = sanitizeInput(nomeOrigem);
         const sanitizedContaOrigem = sanitizeInput(contaOrigem);
         const sanitizedContaDestino = sanitizeInput(contaDestino);
@@ -61,25 +61,34 @@ const generateFinancialReport = async (req, res) => {
         const sanitizedTipoDocumento = sanitizeInput(tipoDocumento);
         const sanitizedSitPagamento = sanitizeInput(sitPagamento);
 
-        // Construir a consulta incluindo contaOrigem e contaDestino
         const query = {};
-
-        // Adiciona os outros parâmetros da consulta se estiverem presentes
         if (sanitizedNomeOrigem) query.nomeOrigem = sanitizedNomeOrigem;
         if (sanitizedContaOrigem) query.contaOrigem = sanitizedContaOrigem;
         if (sanitizedContaDestino) query.contaDestino = sanitizedContaDestino;
         if (sanitizedTipoDocumento)
             query.tipoDocumento = sanitizedTipoDocumento;
         if (sanitizedNomeDestino) query.nomeDestino = sanitizedNomeDestino;
-        if (sanitizedSitPagamento) query.sitPagamento = sanitizedSitPagamento;
+        if (sanitizedSitPagamento) {
+            const today = new Date(); // Data atual
 
-        // Trata as datas de pagamento corretamente
+            if (sanitizedSitPagamento === "Pago") {
+                // Verifica se a data de pagamento existe e não é no futuro
+                query.datadePagamento = { $exists: true, $lte: today };
+            } else if (sanitizedSitPagamento === "Não pago") {
+                // Filtra os registros onde a data de pagamento é nula ou futura
+                query.$or = [
+                    { datadePagamento: { $eq: null } },
+                    { datadePagamento: { $gt: today } },
+                ];
+            }
+        }
+
         if (dataInicio && !dataFinal) {
-            query.datadePagamento = { $gte: new Date(dataInicio) };
+            query.datadeVencimento = { $gte: new Date(dataInicio) };
         } else if (!dataInicio && dataFinal) {
-            query.datadePagamento = { $lte: new Date(dataFinal) };
+            query.datadeVencimento = { $lte: new Date(dataFinal) };
         } else if (dataInicio && dataFinal) {
-            query.datadePagamento = {
+            query.datadeVencimento = {
                 $gte: new Date(dataInicio),
                 $lte: new Date(dataFinal),
             };
@@ -88,7 +97,6 @@ const generateFinancialReport = async (req, res) => {
         console.log("Consulta gerada para o banco de dados:", query);
 
         const financialMovements = await FinancialMovements.find(query);
-
         console.log(
             "Movimentações financeiras encontradas:",
             financialMovements.length
@@ -100,6 +108,22 @@ const generateFinancialReport = async (req, res) => {
                 .send("Nenhuma movimentação financeira encontrada.");
         }
 
+        let includeFieldsArray = Object.keys(includeFields).filter(
+            (key) => includeFields[key] === true
+        );
+
+        const mandatoryFields = [
+            "contaOrigem",
+            "contaDestino",
+            "nomeOrigem",
+            "nomeDestino",
+        ];
+        includeFieldsArray = mandatoryFields.concat(
+            includeFieldsArray.filter(
+                (field) => !mandatoryFields.includes(field)
+            )
+        );
+
         let filePath;
         if (formArquivo === "PDF") {
             filePath = path.join(
@@ -108,7 +132,11 @@ const generateFinancialReport = async (req, res) => {
                 `financial_report.pdf`
             );
             ensureDirectoryExistence(filePath);
-            await generateFinancialReportPDF(financialMovements, filePath);
+            await generateFinancialReportPDF(
+                financialMovements,
+                filePath,
+                includeFieldsArray
+            );
             sendAndDeleteFile(res, filePath, "application/pdf");
         } else if (formArquivo === "CSV") {
             filePath = path.join(
@@ -117,7 +145,11 @@ const generateFinancialReport = async (req, res) => {
                 `financial_report.csv`
             );
             ensureDirectoryExistence(filePath);
-            await generateFinancialReportCSV(financialMovements, filePath);
+            await generateFinancialReportCSV(
+                financialMovements,
+                filePath,
+                includeFieldsArray
+            );
             sendAndDeleteFile(res, filePath, "text/csv");
         } else {
             res.status(400).send("Formato de arquivo inválido.");

@@ -10,33 +10,77 @@ const formatNumericDate = (date) => {
     return `${day}/${month}/${year}`;
 };
 
-const generateFinancialReportCSV = (financialMovements, filePath) => {
+const generateFinancialReportCSV = (
+    financialMovements,
+    filePath,
+    includeFields
+) => {
     return new Promise((resolve, reject) => {
         try {
-            const fields = [
-                { label: "Conta Origem", value: "contaOrigem" },
-                { label: "Conta Destino", value: "contaDestino" },
-                { label: "Nome Origem", value: "nomeOrigem" },
-                { label: "Nome Destino", value: "nomeDestino" },
-                { label: "Tipo Documento", value: "tipoDocumento" },
-                { label: "Valor Bruto", value: "valorBruto" },
-                { label: "Valor Líquido", value: "valorLiquido" },
-                { label: "Forma de Pagamento", value: "formadePagamento" },
-                {
+            // Define todos os campos possíveis
+            const allFields = {
+                tipoDocumento: {
+                    label: "Tipo Documento",
+                    value: "tipoDocumento",
+                },
+                valorBruto: { label: "Valor Bruto", value: "valorBruto" },
+                valorLiquido: { label: "Valor Líquido", value: "valorLiquido" },
+                contaOrigem: { label: "Conta Origem", value: "contaOrigem" },
+                nomeOrigem: { label: "Nome Origem", value: "nomeOrigem" },
+                contaDestino: { label: "Conta Destino", value: "contaDestino" },
+                nomeDestino: { label: "Nome Destino", value: "nomeDestino" },
+                dataVencimento: {
                     label: "Data de Vencimento",
                     value: (row) => formatNumericDate(row.datadeVencimento),
                 },
-                {
+                dataPagamento: {
                     label: "Data de Pagamento",
                     value: (row) => formatNumericDate(row.datadePagamento),
                 },
-                {
-                    label: "Situação de Pagamento",
-                    value: (row) => (row.baixada ? "Pago" : "Não pago"),
+                formaPagamento: {
+                    label: "Forma de Pagamento",
+                    value: "formadePagamento",
                 },
-                { label: "Descrição", value: "descricao" },
+                sitPagamento: {
+                    label: "Situação de Pagamento",
+                    value: (row) => {
+                        const today = new Date(); // Data atual
+                        const paymentDate = row.datadePagamento
+                            ? new Date(row.datadePagamento)
+                            : null;
+
+                        // Verifica se a data de pagamento é nula ou se é uma data futura
+                        return !paymentDate || paymentDate > today
+                            ? "Não pago"
+                            : "Pago";
+                    },
+                },
+
+                descricao: { label: "Descrição", value: "descricao" },
+            };
+
+            // Reorder the includeFields array based on the desired order
+            const orderedFields = [
+                "tipoDocumento",
+                "valorBruto",
+                "valorLiquido",
+                "contaOrigem",
+                "nomeOrigem",
+                "contaDestino",
+                "nomeDestino",
+                "dataVencimento",
+                "dataPagamento",
+                "formaPagamento",
+                "sitPagamento",
+                "descricao",
             ];
 
+            // Filtra os campos com base no array `orderedFields`
+            const fields = orderedFields
+                .filter((field) => includeFields.includes(field)) // Filtra para pegar apenas os campos selecionados
+                .map((field) => allFields[field]); // Mapeia para o formato necessário pelo `json2csv`
+
+            // Gera o CSV com os campos filtrados
             const csv = parse(financialMovements, { fields });
 
             fs.writeFileSync(filePath, csv);

@@ -28,8 +28,23 @@ describe("generateFinancialReportCSV", () => {
         },
     ];
 
-    const mockCsv = `"Conta Origem","Conta Destino","Nome Origem","Nome Destino","Tipo Documento","Valor Bruto","Valor Líquido","Forma de Pagamento","Data de Vencimento","Data de Pagamento","Situação de Pagamento","Descrição"
-"1234","5678","Empresa A","Empresa B","Fatura",1000,900,"Boleto","01/01/2024","10/01/2024","Pago","Pagamento de serviços"`;
+    const mockCsv = `"Tipo Documento","Valor Bruto","Valor Líquido","Conta Origem","Nome Origem","Conta Destino","Nome Destino","Data de Vencimento","Data de Pagamento","Forma de Pagamento","Situação de Pagamento","Descrição"
+"Fatura",1000,900,"1234","Empresa A","5678","Empresa B","01/01/2024","10/01/2024","Boleto","Pago","Pagamento de serviços"`;
+
+    const includeFields = [
+        "tipoDocumento",
+        "valorBruto",
+        "valorLiquido",
+        "contaOrigem",
+        "nomeOrigem",
+        "contaDestino",
+        "nomeDestino",
+        "dataVencimento",
+        "dataPagamento",
+        "formaPagamento",
+        "sitPagamento",
+        "descricao",
+    ];
 
     beforeEach(() => {
         fs.writeFileSync.mockClear();
@@ -37,10 +52,14 @@ describe("generateFinancialReportCSV", () => {
         parse.mockReturnValue(mockCsv);
     });
 
-    it("deve gerar e salvar o arquivo CSV corretamente", async () => {
+    it("deve gerar e salvar o arquivo CSV corretamente com os campos incluídos", async () => {
         const filePath = "/caminho/para/arquivo.csv";
 
-        await generateFinancialReportCSV(mockFinancialMovements, filePath);
+        await generateFinancialReportCSV(
+            mockFinancialMovements,
+            filePath,
+            includeFields
+        );
 
         expect(parse).toHaveBeenCalledWith(mockFinancialMovements, {
             fields: expect.any(Array),
@@ -56,11 +75,16 @@ describe("generateFinancialReportCSV", () => {
         });
 
         await expect(
-            generateFinancialReportCSV(mockFinancialMovements, filePath)
+            generateFinancialReportCSV(
+                mockFinancialMovements,
+                filePath,
+                includeFields
+            )
         ).rejects.toThrow("Erro ao gerar CSV");
 
         expect(fs.writeFileSync).not.toHaveBeenCalled();
     });
+
     describe("formatNumericDate", () => {
         it("deve formatar uma data válida no formato DD/MM/YYYY", () => {
             const date = "2024-01-10T00:00:00.000Z";

@@ -26,6 +26,15 @@ describe("generateFinancialReport Controller", () => {
                 formArquivo: "PDF", // Pode ser "PDF" ou "CSV"
                 dataInicio: "2024-01-01",
                 dataFinal: "2024-12-31",
+                includeFields: {
+                    valorBruto: true,
+                    valorLiquido: true,
+                    formadePagamento: true,
+                    datadeVencimento: true,
+                    datadePagamento: true,
+                    baixada: true,
+                    descricao: true,
+                },
             },
         };
 
@@ -71,7 +80,20 @@ describe("generateFinancialReport Controller", () => {
 
         expect(generateFinancialReportPDF).toHaveBeenCalledWith(
             expect.any(Array),
-            filePath
+            filePath,
+            expect.arrayContaining([
+                "contaOrigem",
+                "contaDestino",
+                "nomeOrigem",
+                "nomeDestino",
+                "valorBruto",
+                "valorLiquido",
+                "formadePagamento",
+                "datadeVencimento",
+                "datadePagamento",
+                "baixada",
+                "descricao",
+            ])
         );
         expect(res.setHeader).toHaveBeenCalledWith(
             "Content-Type",
@@ -98,7 +120,20 @@ describe("generateFinancialReport Controller", () => {
 
         expect(generateFinancialReportCSV).toHaveBeenCalledWith(
             expect.any(Array),
-            filePath
+            filePath,
+            expect.arrayContaining([
+                "contaOrigem",
+                "contaDestino",
+                "nomeOrigem",
+                "nomeDestino",
+                "valorBruto",
+                "valorLiquido",
+                "formadePagamento",
+                "datadeVencimento",
+                "datadePagamento",
+                "baixada",
+                "descricao",
+            ])
         );
         expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "text/csv");
         expect(res.setHeader).toHaveBeenCalledWith(
@@ -110,6 +145,23 @@ describe("generateFinancialReport Controller", () => {
             expect.any(Function)
         );
         expect(fs.unlinkSync).toHaveBeenCalledWith(filePath);
+    });
+
+    it("deve criar o diretório se não existir", async () => {
+        req.body.formArquivo = "PDF";
+        const filePath = path.join(__dirname, "../../PDF/financial_report.pdf");
+
+        generateFinancialReportPDF.mockResolvedValueOnce();
+
+        fs.existsSync.mockReturnValue(false);
+        fs.mkdirSync.mockReturnValue();
+
+        await generateFinancialReport(req, res);
+
+        expect(fs.existsSync).toHaveBeenCalledWith(path.dirname(filePath));
+        expect(fs.mkdirSync).toHaveBeenCalledWith(path.dirname(filePath), {
+            recursive: true,
+        });
     });
 
     it("deve retornar 404 se não houver movimentações financeiras", async () => {
@@ -134,5 +186,14 @@ describe("generateFinancialReport Controller", () => {
         expect(res.send).toHaveBeenCalledWith(
             "Erro ao gerar o relatório financeiro."
         );
+    });
+
+    it("deve retornar 400 se o formato do arquivo for inválido", async () => {
+        req.body.formArquivo = "INVALID_FORMAT";
+
+        await generateFinancialReport(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith("Formato de arquivo inválido.");
     });
 });
