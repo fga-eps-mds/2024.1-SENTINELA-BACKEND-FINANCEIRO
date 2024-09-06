@@ -61,7 +61,7 @@ const generateFinancialReportPDF = (
 
         // Add the total value below the title
         doc.fontSize(12).text(
-            `Valor bruto total do período: R$ ${totalValorBruto.toFixed(2)}`,
+            `Valor bruto total no período selecionado: R$ ${totalValorBruto.toFixed(2)}`,
             textXPosition,
             titleYPosition + 20
         );
