@@ -1,6 +1,5 @@
 const express = require("express");
 const routes = express.Router();
-const newController = require("./Controllers/newController");
 const bankAccountController = require("./Controllers/bankAccountController");
 const supplierFormController = require("./Controllers/supplierFormController");
 const financialMovementsController = require("./Controllers/financialMovementsController");
@@ -64,10 +63,5 @@ routes.post(
     "/financialMovements/report",
     financialReportController.generateFinancialReport
 );
-
-// Rotas Públicas
-
-routes.post("/finance/create", newController.createNew);
-routes.get("/finance", newController.getNews);
 
 module.exports = routes;
