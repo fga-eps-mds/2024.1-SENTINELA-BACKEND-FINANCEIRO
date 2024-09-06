@@ -16,11 +16,15 @@ const createBankAccount = async (req, res) => {
         }
 
         // Verifica se já existe uma conta bancária com o mesmo nome
-        const existingName = await BankAccount.findOne({ name });
+        if (typeof name == "string") {
+            const existingName = await BankAccount.findOne({ name });
 
-        if (existingName) {
-            // Mensagem de erro se o nome já estiver repetido
-            return res.status(409).send({ error: "Nome já cadastrado" }); // Código 409 para conflito
+            if (existingName) {
+                // Mensagem de erro se o nome já estiver repetido
+                return res.status(409).send({ error: "Nome já cadastrado" }); // Código 409 para conflito
+            }
+        } else {
+            return res.status(500).send({ error: "Tipo de dado incorreto" });
         }
 
         // Criação de uma nova conta bancária
@@ -41,30 +45,6 @@ const getAll = async (req, res) => {
         return res.status(200).send(bankAccount);
     } catch (error) {
         return res.status(400).send({ error });
-    }
-};
-
-const getBankAccount = async (req, res) => {
-    try {
-        // Retorna apenas a conta bancária do nome fornecido
-        if (req.query.name) {
-            const bankAccount = await BankAccount.findOne({
-                name: req.query.name,
-            });
-
-            if (bankAccount) {
-                return res.status(200).json(bankAccount);
-            } else {
-                return res
-                    .status(404)
-                    .json({ message: "Conta não encontrada" });
-            }
-        } else {
-            return res.status(400).json({ message: "Nome não fornecido" });
-        }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Erro interno do servidor" });
     }
 };
 
@@ -124,7 +104,6 @@ const updateBankAccount = async (req, res) => {
 
 module.exports = {
     createBankAccount,
-    getBankAccount,
     deleteBankAccount,
     getBankAccountbyId,
     updateBankAccount,

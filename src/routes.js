@@ -1,8 +1,9 @@
 const express = require("express");
 const routes = express.Router();
-const newController = require("./Controllers/newController");
 const bankAccountController = require("./Controllers/bankAccountController");
 const supplierFormController = require("./Controllers/supplierFormController");
+const financialMovementsController = require("./Controllers/financialMovementsController");
+const financialReportController = require("./Controllers/financialReportController");
 
 // Rotas Privadas (Comentadas por enquanto, você pode descomentar quando implementar a validação de token)
 // router.get('/finance', tokenValidation, ???.getUsers);
@@ -12,7 +13,6 @@ routes.post(
     "/finance/createBankAccount",
     bankAccountController.createBankAccount
 );
-routes.get("/finance/bankAccount", bankAccountController.getBankAccount);
 routes.get(
     "/finance/bankAccount/:id",
     bankAccountController.getBankAccountbyId
@@ -39,10 +39,29 @@ routes.patch(
     "/SupplierForm/update/:id",
     supplierFormController.updateSupplierFormById
 );
-
-// Rotas Públicas
-
-routes.post("/finance/create", newController.createNew);
-routes.get("/finance", newController.getNews);
+routes.post(
+    "/financialMovements/create",
+    financialMovementsController.createFinancialMovements
+);
+routes.get(
+    "/financialMovements",
+    financialMovementsController.getFinancialMovements
+);
+routes.get(
+    "/financialMovements/:id",
+    financialMovementsController.getFinancialMovementsById
+);
+routes.delete(
+    "/financialMovements/delete/:id",
+    financialMovementsController.deleteFinancialMovementsById
+);
+routes.patch(
+    "/financialMovements/update/:id",
+    financialMovementsController.updateFinancialMovementsById
+);
+routes.post(
+    "/financialMovements/report",
+    financialReportController.generateFinancialReport
+);
 
 module.exports = routes;
