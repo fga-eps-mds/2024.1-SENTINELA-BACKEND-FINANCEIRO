@@ -48,9 +48,24 @@ describe("Supplier Form Controller Tests", () => {
             .send({
                 supplierData: {
                     nome: "Test Supplier",
-                    email: "supplier@test.com",
-                    celular: "123456789",
-                    logradouro: "123 Supplier St",
+                    tipoPessoa: "",
+                    cpfCnpj: "",
+                    statusFornecedor: "",
+                    naturezaTransacao: "",
+                    email: "",
+                    nomeContato: "",
+                    celular: "",
+                    telefone: "",
+                    cep: "",
+                    cidade: "",
+                    uf_endereco: "",
+                    logradouro: "",
+                    complemento: "",
+                    nomeBanco: "",
+                    agencia: "",
+                    numeroBanco: "",
+                    dv: "",
+                    chavePix: "",
                 },
             });
 
@@ -59,6 +74,36 @@ describe("Supplier Form Controller Tests", () => {
         expect(res.body.nome).toBe("Test Supplier");
 
         supplierId = res.body._id;
+    });
+
+    it("should fail create a new supplier form without name", async () => {
+        const res = await request(app)
+            .post("/SupplierForm/create")
+            .send({
+                supplierData: {
+                    nome: "",
+                    tipoPessoa: "",
+                    cpfCnpj: "",
+                    statusFornecedor: "",
+                    naturezaTransacao: "",
+                    email: "",
+                    nomeContato: "",
+                    celular: "",
+                    telefone: "",
+                    cep: "",
+                    cidade: "",
+                    uf_endereco: "",
+                    logradouro: "",
+                    complemento: "",
+                    nomeBanco: "",
+                    agencia: "",
+                    numeroBanco: "",
+                    dv: "",
+                    chavePix: "",
+                },
+            });
+
+        expect(res.status).toBe(400);
     });
 
     it("should get all supplier forms", async () => {
@@ -75,6 +120,12 @@ describe("Supplier Form Controller Tests", () => {
         expect(res.body).toHaveProperty("nome", "Test Supplier");
     });
 
+    it("should fail get a supplier form without ID", async () => {
+        const res = await request(app).get(`/SupplierForm/${null}`);
+
+        expect(res.status).toBe(400);
+    });
+
     it("should update a supplier form by ID", async () => {
         const res = await request(app)
             .patch(`/SupplierForm/update/${supplierId}`)
@@ -84,7 +135,28 @@ describe("Supplier Form Controller Tests", () => {
         expect(res.body).toHaveProperty("nome", "Updated Supplier");
     });
 
+    it("should fail to update a supplier form without ID", async () => {
+        const res = await request(app)
+            .patch(`/SupplierForm/update/${null}`)
+            .send({ supplierData: { nome: "Updated Supplier" } });
+
+        expect(res.status).toBe(400);
+    });
+
     it("should delete a supplier form by ID", async () => {
+        const res = await request(app).delete(
+            `/SupplierForm/delete/${supplierId}`
+        );
+
+        expect(res.status).toBe(200);
+
+        const checkSupplier = await request(app).get(
+            `/SupplierForm/delete/${supplierId}`
+        );
+        expect(checkSupplier.status).toBe(404);
+    });
+
+    it("should fail to delete a supplier form without ID", async () => {
         const res = await request(app).delete(
             `/SupplierForm/delete/${supplierId}`
         );
