@@ -66,6 +66,32 @@ describe("FinancialMovements API", () => {
         expect(res.body).toHaveProperty("nomeOrigem", "João Silva");
     });
 
+    it("should fail create a new financial movement", async () => {
+        const res = await request(app)
+            .post("/financialMovements/create")
+            .send({
+                financialMovementsData: {
+                    contaOrigem: "",
+                    contaDestino: "",
+                    nomeOrigem: "",
+                    nomeDestino: "",
+                    tipoDocumento: "",
+                    cpFCnpj: "123.456.789-00",
+                    valorBruto: 1000,
+                    valorLiquido: 950,
+                    acrescimo: 50,
+                    desconto: 0,
+                    formadePagamento: "PIX",
+                    datadeVencimento: "",
+                    datadePagamento: "",
+                    baixada: false,
+                    descricao: "Pagamento de serviço",
+                },
+            });
+
+        expect(res.status).toBe(400);
+    });
+
     it("should get financial movement by id", async () => {
         const { body: createdFMovements } = await request(app)
             .post("/financialMovements/create")
@@ -96,6 +122,12 @@ describe("FinancialMovements API", () => {
 
         expect(res.body).toMatchObject(createdFMovements);
         expect(res.status).toBe(200);
+    });
+
+    it("should fail get financial movement by id", async () => {
+        const res = await request(app).get(`/financialMovements/${null}`);
+
+        expect(res.status).toBe(400);
     });
 
     it("should get financial movements", async () => {
@@ -139,6 +171,14 @@ describe("FinancialMovements API", () => {
         expect(res.status).toBe(200);
     });
 
+    it("should fail delete financial movement", async () => {
+        const res = await request(app).delete(
+            `/financialMovements/delete/${null}`
+        );
+
+        expect(res.status).toBe(400);
+    });
+
     it("should update financial movement", async () => {
         const { body: createdFMovements } = await request(app)
             .post("/financialMovements/create")
@@ -168,5 +208,13 @@ describe("FinancialMovements API", () => {
         );
 
         expect(res.status).toBe(200);
+    });
+
+    it("should fail update financial movement without ID", async () => {
+        const res = await request(app)
+            .patch(`/financialMovements/update/${null}`)
+            .send({ fMovementsData: { name: "Conta Atualizada" } });
+
+        expect(res.status).toBe(400);
     });
 });
